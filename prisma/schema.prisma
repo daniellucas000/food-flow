@@ -4,8 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -71,14 +72,14 @@ model Store {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  storeId      String
-  store        Store    @relation(fields: [storeId], references: [id])
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         UserRole @default(STAFF)
-  createdAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id])
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(STAFF)
+  createdAt DateTime @default(now())
 }
 
 model Category {
@@ -131,14 +132,14 @@ model ItemOption {
 }
 
 model Customer {
-  id           String   @id @default(uuid())
-  storeId      String
-  store        Store    @relation(fields: [storeId], references: [id])
-  name         String
-  phone        String
-  email        String?
-  passwordHash String?
-  createdAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id])
+  name      String
+  phone     String
+  email     String?
+  password  String?
+  createdAt DateTime @default(now())
 
   addresses Address[]
   orders    Order[]
