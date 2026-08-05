@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { StoreService } from '../store/store.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { User } from '../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user.id };
+    const payload = {
+      sub: user.id,
+      type: 'user',
+      role: user.role,
+      storeId: user.storeId,
+    };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -101,5 +107,30 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async createStaff(
+    ownerStoreId: string,
+    staffData: { name: string; email: string; password: string },
+  ): Promise<Omit<User, 'password'>> {
+    const existingUser = await this.userService.user({
+      email: staffData.email,
+    });
+    if (existingUser) {
+      throw new ConflictException('Email already in use');
+    }
+
+    const hashedPassword = await bcrypt.hash(staffData.password, 10);
+
+    const staff = await this.userService.createStaff({
+      name: staffData.name,
+      email: staffData.email,
+      password: hashedPassword,
+      storeId: ownerStoreId,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = staff;
+    return result;
   }
 }
