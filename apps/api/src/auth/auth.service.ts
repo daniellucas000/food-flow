@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { StoreService } from '../store/store.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '../generated/prisma/client';
+import { CustomerService } from '../customer/customer.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,8 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly storeService: StoreService,
+    private readonly customerService: CustomerService,
+
     private jwtService: JwtService,
   ) {}
 
@@ -132,5 +135,86 @@ export class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = staff;
     return result;
+  }
+
+  async signUpCustomer(
+    storeId: string,
+    data: { name: string; phone: string; email: string; password: string },
+  ): Promise<{ access_token: string }> {
+    const existingEmail = await this.customerService.findByEmail(
+      storeId,
+      data.email,
+    );
+    if (existingEmail) {
+      throw new ConflictException('Email already in use');
+    }
+
+    const existingPhone = await this.customerService.findByPhone(
+      storeId,
+      data.phone,
+    );
+    if (existingPhone) {
+      throw new ConflictException('Phone already in use');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const customer = await this.customerService.createCustomer({
+      name: data.name,
+      phone: data.phone,
+      storeId,
+      email: data.email,
+      password: hashedPassword,
+    });
+
+    const payload = { sub: customer.id, type: 'customer', storeId };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async signInCustomer(
+    storeId: string,
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const customer = await this.customerService.findByEmail(storeId, email);
+
+    if (!customer || !customer.password) {
+      throw new NotFoundException('Customer not found');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, customer.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { sub: customer.id, type: 'customer', storeId };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async continueAsGuest(
+    storeId: string,
+    data: { name: string; phone: string },
+  ): Promise<{ access_token: string }> {
+    let customer = await this.customerService.findByPhone(storeId, data.phone);
+
+    if (!customer) {
+      customer = await this.customerService.createCustomer({
+        name: data.name,
+        phone: data.phone,
+        storeId,
+      });
+    }
+
+    const payload = { sub: customer.id, type: 'customer', storeId };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

@@ -143,6 +143,9 @@ model Customer {
 
   addresses Address[]
   orders    Order[]
+
+  @@unique([storeId, phone])
+  @@unique([storeId, email])
 }
 
 model Address {

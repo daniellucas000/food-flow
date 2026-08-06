@@ -5,12 +5,14 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { StoreModule } from '../store/store.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
   imports: [
     UserModule,
     StoreModule,
     PrismaModule,
+    CustomerModule,
     JwtModule.register({
       global: true,
       secret: process.env.SECRET,

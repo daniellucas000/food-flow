@@ -39,6 +39,42 @@ export class AuthController {
     return this.authService.registerStore(body.store, body.owner);
   }
 
+  @HttpCode(201)
+  @Post('customer/signup')
+  signUpCustomer(
+    @Body()
+    body: {
+      storeId: string;
+      name: string;
+      phone: string;
+      email: string;
+      password: string;
+    },
+  ) {
+    return this.authService.signUpCustomer(body.storeId, body);
+  }
+
+  @HttpCode(200)
+  @Post('customer/signin')
+  signInCustomer(
+    @Body() body: { storeId: string; email: string; password: string },
+  ) {
+    return this.authService.signInCustomer(
+      body.storeId,
+      body.email,
+      body.password,
+    );
+  }
+
+  @HttpCode(200)
+  @Post('customer/guest')
+  continueAsGuest(
+    @Body() body: { storeId: string; name: string; phone: string },
+  ) {
+    return this.authService.continueAsGuest(body.storeId, body);
+  }
+
+  @HttpCode(201)
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('OWNER')
   @Post('staff')
