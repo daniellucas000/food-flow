@@ -88,7 +88,6 @@ async function handleSubmit() {
       class="auth-card__form"
       @submit.prevent="currentStep === 3 ? handleSubmit() : nextStep()"
     >
-      <!-- Step 1 — Dados da loja -->
       <template v-if="currentStep === 1">
         <label for="name">Nome da loja</label>
         <input id="name" v-model="form.name" required />
@@ -106,7 +105,6 @@ async function handleSubmit() {
         />
       </template>
 
-      <!-- Step 2 — Endereço -->
       <template v-if="currentStep === 2">
         <label for="street">Rua</label>
         <input id="street" v-model="form.street" required />
@@ -127,7 +125,6 @@ async function handleSubmit() {
         <input id="zipCode" v-model="form.zipCode" required type="number" />
       </template>
 
-      <!-- Step 3 — Dados do dono -->
       <template v-if="currentStep === 3">
         <label for="ownerName">Seu nome</label>
         <input id="ownerName" v-model="form.ownerName" required />
