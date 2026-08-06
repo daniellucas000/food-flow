@@ -26,7 +26,7 @@ export class AuthService {
   async signIn(
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; user: Omit<User, 'password'> }> {
     const user = await this.userService.user({ email: email });
 
     if (!user) {
@@ -46,8 +46,12 @@ export class AuthService {
       storeId: user.storeId,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user;
+
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user: userWithoutPassword,
     };
   }
 
