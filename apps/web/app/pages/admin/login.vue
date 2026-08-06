@@ -27,10 +27,7 @@ async function handleSubmit() {
 
 <template>
   <div class="auth-card">
-    <h1>Acesse o painel</h1>
-    <p class="auth-card__subtitle">
-      Entre com sua conta para gerenciar sua loja
-    </p>
+    <h1 class="auth-card__title">Sei lá, alguma coisa</h1>
 
     <form class="auth-card__form" @submit.prevent="handleSubmit">
       <label for="email">Email</label>
@@ -53,27 +50,31 @@ async function handleSubmit() {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .auth-card {
-  width: 380px;
-  padding: 2.5rem;
-}
+  width: 510px;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 1px 4px,
+    rgba(0, 0, 0, 0.06) 0px 4px 16px;
+  background-color: rgb(255, 255, 255);
+  align-self: center;
+  border-radius: 8px;
+  padding: 36px 50px;
 
-.auth-card h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.875rem;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: -0.0024em;
+  }
 
-.auth-card__subtitle {
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-.auth-card__form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 .auth-card__form input {

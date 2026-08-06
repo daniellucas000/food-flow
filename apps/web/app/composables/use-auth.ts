@@ -1,5 +1,20 @@
-import { useAuthStore } from '~/stores/auth.store';
 import type { AuthResponse } from '~/types/auth';
+
+interface RegisterStorePayload {
+  store: {
+    name: string;
+    slug: string;
+    phone: string;
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    openingHours: object;
+  };
+  owner: { name: string; email: string; password: string };
+}
 
 export function useAuth() {
   const token = useCookie<string | null>('auth_token', {
@@ -14,7 +29,18 @@ export function useAuth() {
       method: 'POST',
       body: { email, password },
     });
+    token.value = access_token;
+    authStore.setUser(user);
+  }
 
+  async function registerStore(payload: RegisterStorePayload) {
+    const { access_token, user } = await api<AuthResponse>(
+      '/auth/store-signup',
+      {
+        method: 'POST',
+        body: payload,
+      }
+    );
     token.value = access_token;
     authStore.setUser(user);
   }
@@ -24,5 +50,5 @@ export function useAuth() {
     authStore.clearUser();
   }
 
-  return { login, logout };
+  return { login, registerStore, logout };
 }
