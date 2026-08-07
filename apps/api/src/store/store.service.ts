@@ -9,4 +9,17 @@ export class StoreService {
   async store(where: Prisma.StoreWhereUniqueInput): Promise<Store | null> {
     return this.prisma.store.findUnique({ where });
   }
+
+  async findMenuByStoreId(storeId: string) {
+    return this.prisma.category.findMany({
+      where: { storeId, isActive: true },
+      orderBy: { position: 'asc' },
+      include: {
+        menuItems: {
+          where: { isAvailable: true },
+          orderBy: { position: 'asc' },
+        },
+      },
+    });
+  }
 }

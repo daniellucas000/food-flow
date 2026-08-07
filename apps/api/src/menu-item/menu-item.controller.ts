@@ -7,12 +7,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { MenuItemService } from './menu-item.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { JwtPayload } from '../auth/types/jwt-payload.type';
+import { AuthGuard } from '../auth/guard/auth.guard';
 
-@Controller('menu-item')
+@UseGuards(AuthGuard)
+@Controller('menu-items')
 export class MenuItemController {
   constructor(private readonly menuItemService: MenuItemService) {}
 

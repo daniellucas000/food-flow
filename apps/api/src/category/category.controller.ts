@@ -15,7 +15,7 @@ import type { JwtPayload } from '../auth/types/jwt-payload.type';
 import { AuthGuard } from '../auth/guard/auth.guard';
 
 @UseGuards(AuthGuard)
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
