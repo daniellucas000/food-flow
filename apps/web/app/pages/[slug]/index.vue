@@ -1,16 +1,18 @@
-<!-- app/pages/[slug]/index.vue -->
 <script setup lang="ts">
+import type { PublicStoreMenu, PublicCategory } from '~/types/store';
+
 const route = useRoute();
 const slug = route.params.slug as string;
-const config = useRuntimeConfig();
 
-const { data, pending, error } = await useFetch(
+const { data, pending, error } = await useFetch<PublicStoreMenu>(
   `http://localhost:3333/stores/${slug}/menu`
 );
 
+const storeData = computed(() => data.value!);
+
 const searchTerm = ref('');
 
-const filteredCategories = computed(() => {
+const filteredCategories = computed<PublicCategory[]>(() => {
   if (!data.value) return [];
   if (!searchTerm.value.trim()) return data.value.categories;
 
@@ -38,63 +40,66 @@ const filteredCategories = computed(() => {
     <div class="store-page__info">
       <div class="store-page__info--name">
         <span class="store-page__info--logo">
-          {{ data.store.name.charAt(0) }}
+          {{ storeData.store.name.charAt(0) }}
         </span>
-        <h1 class="store-page__info--title">{{ data.store.name }}</h1>
+        <h1 class="store-page__info--title">{{ storeData.store.name }}</h1>
       </div>
 
-      <div class="store-header__details">
-        <div class="store-header__meta">
-          <span>Taxa de entrega: R$ {{ data.store.deliveryFee }}</span>
+      <div class="store-page__details">
+        <button class="store-page__details--button">Ver mais</button>
+        <span class="store-page__details--minimum-order"
+          >Pedido mínimo R$ 20,00</span
+        >
+      </div>
+    </div>
+
+    <div class="store-page__header-wrapper">
+      <input
+        class="store-page__header-wrapper--search"
+        v-model="searchTerm"
+        placeholder="Buscar no cardápio"
+      />
+
+      <div class="store-page__header-wrapper--scheduling">
+        <button>Entrega</button>
+        <div>
+          <span class="store-page__header-wrapper--day">Hoje</span>
+          <div class="store-page__header-wrapper--subtitle">
+            <span>38-48 min</span>
+            <span>R$ {{ storeData.store.deliveryFee }}</span>
+          </div>
         </div>
-        <span
-          v-if="!data.store.isOpen"
-          class="store-header__badge store-header__badge--closed"
-        >
-          Fechado no momento
-        </span>
-        <span v-else class="store-header__badge store-header__badge--open"
-          >Aberto</span
-        >
       </div>
     </div>
 
-    <div class="store-header__search">
-      <input v-model="searchTerm" placeholder="Buscar no cardápio" />
-    </div>
+    <ul class="store-page__menu">
+      <li v-for="category in filteredCategories" :key="category.id" class="">
+        <h2 class="store-page__menu--category-title">{{ category.name }}</h2>
 
-    <main class="store-menu">
-      <section
-        v-for="category in filteredCategories"
-        :key="category.id"
-        class="store-menu__category"
-      >
-        <h2>{{ category.name }}</h2>
+        <a class="store-page__menu--dish-card">
+          <div v-for="item in category.menuItems" :key="item.id">
+            <h3 class="store-page__menu--item-description">{{ item.name }}</h3>
+            <p class="store-page__menu--item-details" v-if="item.description">
+              {{ item.description }}
+            </p>
 
-        <div class="store-menu__grid">
-          <article
-            v-for="item in category.menuItems"
-            :key="item.id"
-            class="menu-card"
-          >
-            <div class="menu-card__info">
-              <h3>{{ item.name }}</h3>
-              <p v-if="item.description">{{ item.description }}</p>
-              <span class="menu-card__price">R$ {{ item.price }}</span>
-            </div>
+            <span class="store-page__menu--info-serves"> Serve 1 pessoa</span>
+            <span class="store-page__menu--item-price"
+              >R$ {{ item.price }}</span
+            >
 
-            <div class="menu-card__image">
+            <div class="">
               <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" />
               <div v-else class="menu-card__image-placeholder" />
             </div>
-          </article>
-        </div>
-      </section>
+          </div>
+        </a>
+      </li>
 
       <p v-if="filteredCategories.length === 0" class="store-menu__empty">
         Nenhum item encontrado
       </p>
-    </main>
+    </ul>
   </div>
 </template>
 
@@ -122,6 +127,7 @@ const filteredCategories = computed(() => {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    margin-bottom: 30px;
 
     &--name {
       display: flex;
@@ -149,130 +155,145 @@ const filteredCategories = computed(() => {
       line-height: 44px;
     }
   }
-}
 
-.store-header__badge {
-  font-size: 0.8rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-}
+  &__details {
+    display: flex;
+    align-items: center;
+    gap: 30px;
 
-.store-header__badge--open {
-  background: #e6f7ec;
-  color: #1a7f37;
-}
+    &--button {
+      font-size: 1rem;
+      line-height: 19.79px;
+      font-weight: 700;
+      color: #ea1d2c;
+    }
 
-.store-header__badge--closed {
-  background: #fdeaea;
-  color: #e63946;
-}
+    &--minimum-order {
+      font-size: 0.75rem;
+      color: #a6a6a5;
+      font-weight: 400;
+      line-height: 16px;
+    }
+  }
 
-.store-header__meta {
-  max-width: 800px;
-  margin: 1rem auto 0;
-  padding: 0 1.5rem;
-  color: #666;
-  font-size: 0.9rem;
-}
+  &__header-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 
-.store-header__search {
-  max-width: 800px;
-  margin: 1rem auto 0;
-  padding: 0 1.5rem 1.5rem;
-}
+    &--search {
+      flex: 1;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
 
-.store-header__search input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
+    &--scheduling {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
 
-.store-menu {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
+      button {
+        background: #fff;
+        border: 1px solid #f2f2f2;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        cursor: pointer;
+        flex: 1 1;
+        height: 58px;
+        padding: 0 1rem;
+        font-size: 14px;
+      }
+    }
 
-.store-menu__category {
-  margin-bottom: 2.5rem;
-}
+    &--day {
+      font-size: 0.875rem;
+      text-align: left;
+      color: #3e3e3e;
+      line-height: 1.125rem;
+      font-weight: 400;
+    }
 
-.store-menu__category h2 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
+    &--subtitle {
+      display: flex;
+      align-items: center;
+      margin-top: 2px;
+      line-height: 1rem;
 
-.store-menu__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
+      span {
+        text-align: left;
+        color: #717171;
+        font-size: 0.75rem;
+        padding: 0 2px 0 0;
+        font-weight: 300;
+      }
+    }
+  }
 
-.menu-card {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid #eee;
-  border-radius: 8px;
-}
+  &__menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 30px;
 
-.menu-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  flex: 1;
-}
+    &--category-title {
+      font-size: 1.5rem;
+      letter-spacing: -1px;
+      padding: 40px 0 20px;
+      font-weight: 500;
+      color: #3f3e3e;
+    }
 
-.menu-card__info h3 {
-  font-size: 0.95rem;
-}
+    &--dish-card {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      grid-gap: 15px;
+      min-height: 147px;
+      width: 100%;
+      background: #fff;
+      text-decoration: none;
+      transition: 0.2s;
+      overflow: hidden;
+      padding: 15px;
+      min-width: 320px;
+      border: 1px solid #f2f2f2;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+    }
 
-.menu-card__info p {
-  font-size: 0.8rem;
-  color: #777;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+    &--item-description {
+      font-size: 1.125rem;
+      line-height: 1.5rem;
+      color: #3e3e3e;
+      font-weight: 400;
+      margin-bottom: 18px;
+    }
 
-.menu-card__price {
-  font-weight: 600;
-  color: #1a7f37;
-}
+    &--item-details {
+      font-size: 0.875rem;
+      line-height: 1rem;
+      font-weight: lighter;
+      color: #717171;
+      word-break: break-word;
+      margin-bottom: 10px;
+    }
 
-.menu-card__image {
-  width: 90px;
-  height: 90px;
-  flex-shrink: 0;
-}
+    &--info-serves {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 0.875rem;
+      line-height: 1rem;
+      color: #3e3e3e;
+      font-weight: 500;
+    }
 
-.menu-card__image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.menu-card__image-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #f0f0f0;
-  border-radius: 8px;
-}
-
-.store-menu__empty {
-  text-align: center;
-  color: #999;
-  padding: 2rem;
-}
-
-@media (max-width: 600px) {
-  .store-menu__grid {
-    grid-template-columns: 1fr;
+    &--item-price {
+      font-size: 1rem;
+      line-height: 1.25rem;
+      font-weight: 400;
+      color: #50a773;
+    }
   }
 }
 </style>
