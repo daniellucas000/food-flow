@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { StoreService } from '../store/store.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from '../generated/prisma/client';
+import { Customer, User } from '../generated/prisma/client';
 import { CustomerService } from '../customer/customer.service';
 
 @Injectable()
@@ -142,11 +142,16 @@ export class AuthService {
   }
 
   async signUpCustomer(
-    storeId: string,
+    slug: string,
     data: { name: string; phone: string; email: string; password: string },
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; customer: Omit<Customer, 'password'> }> {
+    const store = await this.storeService.store({ slug });
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
     const existingEmail = await this.customerService.findByEmail(
-      storeId,
+      store.id,
       data.email,
     );
     if (existingEmail) {
@@ -154,7 +159,7 @@ export class AuthService {
     }
 
     const existingPhone = await this.customerService.findByPhone(
-      storeId,
+      store.id,
       data.phone,
     );
     if (existingPhone) {
@@ -166,15 +171,18 @@ export class AuthService {
     const customer = await this.customerService.createCustomer({
       name: data.name,
       phone: data.phone,
-      storeId,
+      storeId: store.id,
       email: data.email,
       password: hashedPassword,
     });
 
-    const payload = { sub: customer.id, type: 'customer', storeId };
+    const payload = { sub: customer.id, type: 'customer', storeId: store.id };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...customerWithoutPassword } = customer;
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      customer: customerWithoutPassword,
     };
   }
 
