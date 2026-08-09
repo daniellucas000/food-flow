@@ -187,11 +187,16 @@ export class AuthService {
   }
 
   async signInCustomer(
-    storeId: string,
+    slug: string,
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
-    const customer = await this.customerService.findByEmail(storeId, email);
+  ): Promise<{ access_token: string; customer: Omit<Customer, 'password'> }> {
+    const store = await this.storeService.store({ slug });
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    const customer = await this.customerService.findByEmail(store.id, email);
 
     if (!customer || !customer.password) {
       throw new NotFoundException('Customer not found');
@@ -202,31 +207,42 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: customer.id, type: 'customer', storeId };
+    const payload = { sub: customer.id, type: 'customer', storeId: store.id };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...customerWithoutPassword } = customer;
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      customer: customerWithoutPassword,
     };
   }
 
   async continueAsGuest(
-    storeId: string,
+    slug: string,
     data: { name: string; phone: string },
-  ): Promise<{ access_token: string }> {
-    let customer = await this.customerService.findByPhone(storeId, data.phone);
+  ): Promise<{ access_token: string; customer: Omit<Customer, 'password'> }> {
+    const store = await this.storeService.store({ slug });
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    let customer = await this.customerService.findByPhone(store.id, data.phone);
 
     if (!customer) {
       customer = await this.customerService.createCustomer({
         name: data.name,
         phone: data.phone,
-        storeId,
+        storeId: store.id,
       });
     }
 
-    const payload = { sub: customer.id, type: 'customer', storeId };
+    const payload = { sub: customer.id, type: 'customer', storeId: store.id };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...customerWithoutPassword } = customer;
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      customer: customerWithoutPassword,
     };
   }
 

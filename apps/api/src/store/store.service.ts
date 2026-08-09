@@ -18,6 +18,11 @@ export class StoreService {
         menuItems: {
           where: { isAvailable: true },
           orderBy: { position: 'asc' },
+          include: {
+            optionGroups: {
+              include: { options: true },
+            },
+          },
         },
       },
     });

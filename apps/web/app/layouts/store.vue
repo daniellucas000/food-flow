@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { LogOut } from '@lucide/vue';
+
 const route = useRoute();
 const slug = route.params.slug as string;
 
@@ -33,7 +35,9 @@ async function handleLogout() {
         <span class="store-header__user-name"
           >Olá, {{ customerStore.customer.name }}</span
         >
-        <button class="store-header__logout" @click="handleLogout">Sair</button>
+        <button class="store-header__logout" @click="handleLogout">
+          <LogOut />
+        </button>
       </div>
 
       <NuxtLink v-else :to="`/${slug}/login`" class="store-nav__login">

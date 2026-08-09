@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import type { PublicStoreMenu, PublicCategory } from '~/types/store';
-
 definePageMeta({
   layout: 'store',
 });
+import type {
+  PublicStoreMenu,
+  PublicCategory,
+  PublicMenuItem,
+} from '~/types/store';
 
 const route = useRoute();
 const slug = route.params.slug as string;
+
+const selectedItem = ref<PublicMenuItem | null>(null);
 
 const { data, pending, error } = await useFetch<PublicStoreMenu>(
   `http://localhost:3333/stores/${slug}/menu`
@@ -81,7 +86,11 @@ const filteredCategories = computed<PublicCategory[]>(() => {
         <h2 class="store-page__menu--category-title">{{ category.name }}</h2>
 
         <a class="store-page__menu--dish-card">
-          <div v-for="item in category.menuItems" :key="item.id">
+          <div
+            v-for="item in category.menuItems"
+            :key="item.id"
+            @click="selectedItem = item"
+          >
             <h3 class="store-page__menu--item-description">{{ item.name }}</h3>
             <p class="store-page__menu--item-details" v-if="item.description">
               {{ item.description }}
@@ -105,6 +114,13 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       </p>
     </ul>
   </div>
+
+  <ItemDetailModal
+    v-if="selectedItem"
+    :item="selectedItem"
+    :slug="slug"
+    @close="selectedItem = null"
+  />
 </template>
 
 <style scoped lang="scss">
