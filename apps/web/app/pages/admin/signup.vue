@@ -2,7 +2,7 @@
 import { vMaska } from 'maska/vue';
 
 definePageMeta({
-  layout: 'admin-auth',
+  layout: 'auth',
 });
 
 const currentStep = ref(1);

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { PublicStoreMenu, PublicCategory } from '~/types/store';
 
+definePageMeta({
+  layout: 'store',
+});
+
 const route = useRoute();
 const slug = route.params.slug as string;
 

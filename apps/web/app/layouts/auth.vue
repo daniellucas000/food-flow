@@ -2,7 +2,9 @@
   <div class="auth-layout">
     <div class="auth-layout__panel">
       <span class="auth-layout__brand">Food</span>
-      <div class="auth-layout__illustration">🍔</div>
+      <div class="auth-layout__illustration">
+        <img src="/images/flat-customer.png" alt="" />
+      </div>
     </div>
 
     <div class="auth-layout__content">

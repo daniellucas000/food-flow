@@ -229,4 +229,18 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async getCustomerProfile(
+    customerId: string,
+  ): Promise<Omit<Customer, 'password'>> {
+    const customer = await this.customerService.customer({ id: customerId });
+
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...customerWithoutPassword } = customer;
+    return customerWithoutPassword;
+  }
 }

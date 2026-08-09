@@ -2,7 +2,7 @@
 import type { Category, MenuItem } from '~/types/menu';
 
 definePageMeta({
-  middleware: 'auth-staff',
+  middlewares: 'auth-staff',
   layout: 'admin',
 });
 

@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './guard/auth.guard';
 import type { JwtPayload } from './types/jwt-payload.type';
@@ -81,5 +88,12 @@ export class AuthController {
   @Post('customer/guest')
   continueAsGuest(@Body() body: { slug: string; name: string; phone: string }) {
     return this.authService.continueAsGuest(body.slug, body);
+  }
+
+  @HttpCode(200)
+  @UseGuards(AuthGuard)
+  @Get('customer/me')
+  getCustomerProfile(@CurrentUser() user: JwtPayload) {
+    return this.authService.getCustomerProfile(user.sub);
   }
 }
