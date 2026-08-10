@@ -13,8 +13,10 @@ const slug = route.params.slug as string;
 
 const selectedItem = ref<PublicMenuItem | null>(null);
 
+const config = useRuntimeConfig();
+
 const { data, pending, error } = await useFetch<PublicStoreMenu>(
-  `http://localhost:3333/stores/${slug}/menu`
+  `${config.public.apiBase}/stores/${slug}/menu`
 );
 
 const storeData = computed(() => data.value!);

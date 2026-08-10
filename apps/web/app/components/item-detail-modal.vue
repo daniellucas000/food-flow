@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Users, X } from '@lucide/vue';
 import type { PublicMenuItem } from '~/types/store';
 
 const props = defineProps<{ item: PublicMenuItem; slug: string }>();
@@ -79,58 +80,82 @@ function handleAddToCart() {
 <template>
   <div class="modal-overlay" @click.self="emit('close')">
     <div class="modal">
-      <button class="modal__close" @click="emit('close')">×</button>
+      <div class="modal__img-container">
+        <img src="/images/flat-customer.png" alt="" />
+      </div>
 
-      <h2>{{ item.name }}</h2>
-      <p v-if="item.description">{{ item.description }}</p>
-      <span class="modal__price">R$ {{ item.price }}</span>
-
-      <div
-        v-for="group in item.optionGroups"
-        :key="group.id"
-        class="modal__group"
-      >
-        <h3>
-          {{ group.name }}
-          <small v-if="group.required">(obrigatório)</small>
-        </h3>
-
-        <label
-          v-for="option in group.options"
-          :key="option.id"
-          class="modal__option"
-        >
-          <input
-            :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
-            :name="group.id"
-            :checked="selections[group.id]?.includes(option.id)"
-            @change="toggleOption(group, option.id)"
-          />
-          {{ option.name }}
-          <span v-if="Number(option.priceModifier) > 0"
-            >+ R$ {{ option.priceModifier }}</span
+      <div class="modal__content">
+        <header>
+          <div class="modal__content--header-top">
+            <h4>{{ item.name }}</h4>
+            <button @click="emit('close')"><X /></button>
+          </div>
+          <p class="modal__content--item-description">{{ item.description }}</p>
+          <span class="modal__content--info-serves"
+            ><Users :size="12" /> 4 pessoas</span
           >
-        </label>
-      </div>
+          <span class="modal__content--price">R$ {{ item.price }}</span>
+        </header>
 
-      <div class="modal__quantity">
-        <button @click="quantity = Math.max(1, quantity - 1)">-</button>
-        <span>{{ quantity }}</span>
-        <button @click="quantity++">+</button>
-      </div>
+        <div class="modal__content--header-choices">
+          <div>
+            <strong>Escolha seu sanduíche</strong>
+            <span class="choice-desc">Escolha 4 opções. </span>
+          </div>
+          <div class="flex">
+            <span class="mini-tag">0/4</span>
+            <span class="mini-tag">obrigatório</span>
+          </div>
+        </div>
 
-      <button
-        class="modal__submit"
-        :disabled="!isValid"
-        @click="handleAddToCart"
-      >
-        Adicionar — R$ {{ totalPrice.toFixed(2) }}
-      </button>
+        <div
+          v-for="group in item.optionGroups"
+          :key="group.id"
+          class="modal__group"
+        >
+          <h3>
+            {{ group.name }}
+            <small v-if="group.required">(obrigatório)</small>
+          </h3>
+
+          <label
+            v-for="option in group.options"
+            :key="option.id"
+            class="modal__option"
+          >
+            <input
+              :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
+              :name="group.id"
+              :checked="selections[group.id]?.includes(option.id)"
+              @change="toggleOption(group, option.id)"
+            />
+            {{ option.name }}
+            <span v-if="Number(option.priceModifier) > 0"
+              >+ R$ {{ option.priceModifier }}</span
+            >
+          </label>
+        </div>
+        <div>
+          <div class="modal__quantity">
+            <button @click="quantity = Math.max(1, quantity - 1)">-</button>
+            <span>{{ quantity }}</span>
+            <button @click="quantity++">+</button>
+          </div>
+
+          <button
+            class="modal__submit"
+            :disabled="!isValid"
+            @click="handleAddToCart"
+          >
+            Adicionar — R$ {{ totalPrice.toFixed(2) }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -141,13 +166,116 @@ function handleAddToCart() {
   z-index: 9999;
 }
 .modal {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  width: 420px;
-  max-height: 85vh;
+  display: grid;
+  // grid-template-columns: 1fr 1fr;
+  left: 50%;
+  opacity: 1;
+  overflow-x: hidden;
   overflow-y: auto;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  min-width: 1200px;
+  width: fit-content;
+  grid-template: 40px auto 80px / 1fr 1fr;
+  height: 45vw;
+  max-width: 1200px;
+  max-height: 580px;
+  min-height: auto;
+  border-radius: 4px;
+
+  &__content {
+    &--header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+
+      h4 {
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: #3e3e3e;
+      }
+    }
+
+    &--item-description {
+      display: inline-block;
+      font-size: 0.875rem;
+      padding: 10px 40px 0 0px;
+      font-weight: 300;
+      line-height: 1.22;
+      color: #717171;
+      white-space: pre-line;
+      word-break: break-all;
+    }
+
+    &--info-serves {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.875rem;
+      line-height: 1rem;
+      color: #3e3e3e;
+      font-weight: 500;
+      padding: 10px 0;
+    }
+
+    &--price {
+      display: block;
+      font-size: 1rem;
+      color: #50a773;
+      margin: 12px 0;
+    }
+
+    &--header-choices {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f2f2f2;
+      z-index: 20;
+      position: sticky;
+      top: 0;
+      padding: 12px 40px 10px;
+
+      div {
+        display: flex;
+        flex-direction: column;
+
+        &.flex {
+          flex-direction: row;
+          gap: 3px;
+        }
+
+        strong {
+          font-size: 1rem;
+          line-height: 1.25em;
+          font-weight: 500;
+          color: #3f3e3e;
+        }
+
+        span.choice-desc {
+          font-weight: 100;
+          font-size: 0.875rem;
+          line-height: 17px;
+          display: block;
+          color: #717171;
+        }
+
+        .mini-tag {
+          font-size: 0.625rem;
+          line-height: 1;
+          background-color: rgb(113, 113, 113);
+          color: rgb(245, 240, 235);
+          padding: 6px 6px 4px;
+          height: max-content;
+          border-radius: 3px;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
 }
 .modal__close {
   position: absolute;
