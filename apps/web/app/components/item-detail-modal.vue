@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Users, X } from '@lucide/vue';
+import { Minus, Plus, Users, X } from '@lucide/vue';
 import type { PublicMenuItem } from '~/types/store';
 
 const props = defineProps<{ item: PublicMenuItem; slug: string }>();
@@ -135,19 +135,24 @@ function handleAddToCart() {
             >
           </label>
         </div>
-        <div>
-          <div class="modal__quantity">
-            <button @click="quantity = Math.max(1, quantity - 1)">-</button>
+        <div class="modal__actions">
+          <div class="modal__actions--counter">
+            <button @click="quantity = Math.max(1, quantity - 1)">
+              <Minus />
+            </button>
             <span>{{ quantity }}</span>
-            <button @click="quantity++">+</button>
+            <button @click="quantity++">
+              <Plus />
+            </button>
           </div>
 
           <button
-            class="modal__submit"
+            class="modal__actions--submit"
             :disabled="!isValid"
             @click="handleAddToCart"
           >
-            Adicionar — R$ {{ totalPrice.toFixed(2) }}
+            <span> Adicionar</span>
+            <span>R${{ totalPrice.toFixed(2) }}</span>
           </button>
         </div>
       </div>
@@ -190,10 +195,10 @@ function handleAddToCart() {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 1rem 0 0;
 
       h4 {
-        font-size: 0.75rem;
+        font-size: 1rem;
         font-weight: 500;
         text-transform: uppercase;
         color: #3e3e3e;
@@ -276,47 +281,46 @@ function handleAddToCart() {
       }
     }
   }
-}
-.modal__close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  border: none;
-  background: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-.modal__price {
-  font-weight: 600;
-  color: #50a773;
-}
-.modal__group {
-  margin-top: 1.5rem;
-}
-.modal__option {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-}
-.modal__quantity {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-.modal__submit {
-  width: 100%;
-  padding: 0.85rem;
-  background: #e63946;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.modal__submit:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding: 20px;
+
+    &--counter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgb(220, 220, 220);
+      border-radius: 4px;
+
+      button {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        color: rgb(234, 29, 44);
+      }
+
+      span {
+        font-size: 1.125rem;
+      }
+    }
+
+    &--submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 240px;
+      text-align: center;
+      background: rgb(234, 29, 44);
+      color: #fff;
+      padding: 15px;
+      border-radius: 4px;
+    }
+  }
 }
 </style>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { LogOut } from '@lucide/vue';
+import { Handbag, LogOut } from '@lucide/vue';
 
 const route = useRoute();
 const slug = route.params.slug as string;
 
 const customerStore = useCustomerStore();
+const cartStore = useCartStore();
+
 const { fetchProfile, logout } = useCustomerAuth();
 const token = useCookie('customer_token');
 
@@ -38,6 +40,18 @@ async function handleLogout() {
         <button class="store-header__logout" @click="handleLogout">
           <LogOut />
         </button>
+
+        <button class="store-header__cart" @click="cartStore.open()">
+          <Handbag :size="20" />
+          <div>
+            <span>
+              {{ cartStore.total }}
+            </span>
+            <span v-if="cartStore.itemCount > 0" class="store-nav__cart-count">
+              {{ cartStore.itemCount }}
+            </span>
+          </div>
+        </button>
       </div>
 
       <NuxtLink v-else :to="`/${slug}/login`" class="store-nav__login">
@@ -46,6 +60,7 @@ async function handleLogout() {
     </header>
     <slot />
   </div>
+  <CartDrawer />
 </template>
 
 <style scoped lang="scss">
