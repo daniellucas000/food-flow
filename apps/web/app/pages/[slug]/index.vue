@@ -87,12 +87,13 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       <li v-for="category in filteredCategories" :key="category.id" class="">
         <h2 class="store-page__menu--category-title">{{ category.name }}</h2>
 
-        <a class="store-page__menu--dish-card">
-          <div
-            v-for="item in category.menuItems"
-            :key="item.id"
-            @click="selectedItem = item"
-          >
+        <div
+          class="store-page__menu--dish-card"
+          v-for="item in category.menuItems"
+          :key="item.id"
+          @click="selectedItem = item"
+        >
+          <div>
             <h3 class="store-page__menu--item-description">{{ item.name }}</h3>
             <p class="store-page__menu--item-details" v-if="item.description">
               {{ item.description }}
@@ -108,7 +109,7 @@ const filteredCategories = computed<PublicCategory[]>(() => {
               <div v-else class="menu-card__image-placeholder" />
             </div>
           </div>
-        </a>
+        </div>
       </li>
 
       <p v-if="filteredCategories.length === 0" class="store-menu__empty">
@@ -281,6 +282,11 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       border: 1px solid #f2f2f2;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
       border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid #dbdad9;
+      }
     }
 
     &--item-description {

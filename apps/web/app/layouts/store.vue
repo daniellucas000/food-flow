@@ -37,20 +37,23 @@ async function handleLogout() {
         <span class="store-header__user-name"
           >Olá, {{ customerStore.customer.name }}</span
         >
-        <button class="store-header__logout" @click="handleLogout">
-          <LogOut />
-        </button>
-
-        <button class="store-header__cart" @click="cartStore.open()">
-          <Handbag :size="20" />
+        <button
+          :class="['store-header__cart', { active: cartStore.itemCount > 0 }]"
+          @click="cartStore.open()"
+        >
+          <Handbag :size="24" />
           <div>
-            <span>
-              {{ cartStore.total }}
+            <span class="store-header__cart--cost">
+              R$ {{ cartStore.total }}
             </span>
-            <span v-if="cartStore.itemCount > 0" class="store-nav__cart-count">
+            <span class="store-header__cart--items">
               {{ cartStore.itemCount }}
+              {{ cartStore.itemCount === 1 ? 'item' : 'itens' }}
             </span>
           </div>
+        </button>
+        <button class="store-header__logout" @click="handleLogout">
+          <LogOut />
         </button>
       </div>
 
@@ -85,14 +88,54 @@ async function handleLogout() {
     display: flex;
     gap: 24px;
 
-    span {
-      font-size: 0.875rem;
+    > span {
+      font-size: 1rem;
       color: #717171;
       font-weight: 500;
       display: flex;
       align-items: center;
       text-align: left;
       line-break: anywhere;
+    }
+  }
+
+  &__cart {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 200px;
+    gap: 10px;
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #f7f7f7;
+    }
+
+    &.active {
+      background: #ea1d2c;
+      color: #fff;
+
+      span {
+        color: #fff;
+      }
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &--cost {
+      font-size: 0.75rem;
+      line-height: 1rem;
+      color: #717171;
+    }
+
+    &--items {
+      font-size: 0.625rem;
+      line-height: 0.75rem;
+      color: #717171;
     }
   }
 }
