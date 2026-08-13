@@ -6,12 +6,12 @@ export interface CartItem {
   unitPrice: number;
   quantity: number;
   selectedOptions: {
+    itemOptionId: string;
     groupName: string;
     optionName: string;
     priceModifier: number;
   }[];
 }
-
 export const useCartStore = defineStore(
   'cart',
   () => {

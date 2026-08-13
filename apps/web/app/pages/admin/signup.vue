@@ -110,7 +110,7 @@ async function handleSubmit() {
         <input id="street" v-model="form.street" required />
 
         <label for="number">Número</label>
-        <input id="number" v-model="form.number" required type="number" />
+        <input id="number" v-model="form.number" required />
 
         <label for="neighborhood">Bairro</label>
         <input id="neighborhood" v-model="form.neighborhood" required />
@@ -122,7 +122,7 @@ async function handleSubmit() {
         <input id="state" v-model="form.state" required maxlength="2" />
 
         <label for="zipCode">CEP</label>
-        <input id="zipCode" v-model="form.zipCode" required type="number" />
+        <input id="zipCode" v-model="form.zipCode" required />
       </template>
 
       <template v-if="currentStep === 3">

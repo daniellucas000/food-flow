@@ -62,6 +62,7 @@ function handleAddToCart() {
     selections[group.id]!.map((optionId) => {
       const option = group.options.find((o) => o.id === optionId)!;
       return {
+        itemOptionId: option.id,
         groupName: group.name,
         optionName: option.name,
         priceModifier: Number(option.priceModifier),
