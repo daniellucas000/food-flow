@@ -2,7 +2,11 @@
 import { Minus, Plus, Users, X } from '@lucide/vue';
 import type { PublicMenuItem } from '~/types/store';
 
-const props = defineProps<{ item: PublicMenuItem; slug: string }>();
+const props = defineProps<{
+  item: PublicMenuItem;
+  slug: string;
+  storeName: string;
+}>();
 const emit = defineEmits<{ close: [] }>();
 
 const cartStore = useCartStore();
@@ -65,7 +69,7 @@ function handleAddToCart() {
     })
   );
 
-  cartStore.addItem(props.slug, {
+  cartStore.addItem(props.slug, props.storeName, {
     menuItemId: props.item.id,
     name: props.item.name,
     unitPrice: Number(props.item.price),

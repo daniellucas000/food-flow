@@ -122,6 +122,7 @@ const filteredCategories = computed<PublicCategory[]>(() => {
     v-if="selectedItem"
     :item="selectedItem"
     :slug="slug"
+    :store-name="storeData.store.name"
     @close="selectedItem = null"
   />
 </template>

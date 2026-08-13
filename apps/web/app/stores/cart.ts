@@ -17,6 +17,7 @@ export const useCartStore = defineStore(
   () => {
     const items = ref<CartItem[]>([]);
     const storeId = ref<string | null>(null);
+    const storeName = ref<string | null>(null);
     const isOpen = ref(false);
 
     const total = computed(() =>
@@ -33,11 +34,16 @@ export const useCartStore = defineStore(
       items.value.reduce((sum, item) => sum + item.quantity, 0)
     );
 
-    function addItem(newStoreId: string, item: Omit<CartItem, 'id'>) {
+    function addItem(
+      newStoreId: string,
+      newStoreName: string,
+      item: Omit<CartItem, 'id'>
+    ) {
       if (storeId.value && storeId.value !== newStoreId) {
         items.value = [];
       }
       storeId.value = newStoreId;
+      storeName.value = newStoreName;
       items.value.push({ ...item, id: crypto.randomUUID() });
     }
 
@@ -48,6 +54,7 @@ export const useCartStore = defineStore(
     function clear() {
       items.value = [];
       storeId.value = null;
+      storeName.value = null;
     }
 
     function open() {
@@ -61,6 +68,7 @@ export const useCartStore = defineStore(
     return {
       items,
       storeId,
+      storeName,
       isOpen,
       total,
       itemCount,
@@ -73,7 +81,7 @@ export const useCartStore = defineStore(
   },
   {
     persist: {
-      pick: ['items', 'storeId'],
+      pick: ['items', 'storeId', 'storeName'],
     },
   }
 );

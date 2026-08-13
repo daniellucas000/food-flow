@@ -1,6 +1,5 @@
-<!-- app/components/CartDrawer.vue -->
 <script setup lang="ts">
-import { Minus, Plus, Trash2, X } from '@lucide/vue';
+import { Minus, Plus, X } from '@lucide/vue';
 
 const route = useRoute();
 const slug = route.params.slug as string;
@@ -45,7 +44,10 @@ async function handleCheckout() {
     <Transition name="slide">
       <aside v-if="cartStore.isOpen" class="cart-drawer">
         <header class="cart-drawer__header">
-          <h2>Seu carrinho</h2>
+          <h2 class="cart-drawer__header--title">
+            Seu pedido em
+            <span>{{ cartStore.storeName }}</span>
+          </h2>
           <button @click="cartStore.close()"><X :size="20" /></button>
         </header>
 
@@ -60,10 +62,12 @@ async function handleCheckout() {
               :key="item.id"
               class="cart-drawer__item"
             >
-              <div class="cart-drawer__item-info">
-                <strong>{{ item.name }}</strong>
+              <div>
+                <strong class="cart-drawer__item--title">{{
+                  item.name
+                }}</strong>
 
-                <ul
+                <!-- <ul
                   v-if="item.selectedOptions.length > 0"
                   class="cart-drawer__options"
                 >
@@ -73,31 +77,45 @@ async function handleCheckout() {
                       >(+ R$ {{ option.priceModifier.toFixed(2) }})</span
                     >
                   </li>
-                </ul>
-
-                <button
-                  class="cart-drawer__remove"
-                  @click="cartStore.removeItem(item.id)"
-                >
-                  <Trash2 :size="13" /> Remover
-                </button>
-              </div>
-
-              <div class="cart-drawer__item-controls">
-                <div class="cart-drawer__quantity">
-                  <button @click="decreaseQuantity(item.id)">
-                    <Minus :size="13" />
-                  </button>
-                  <span>{{ item.quantity }}</span>
-                  <button @click="increaseQuantity(item.id)">
-                    <Plus :size="13" />
+                </ul> -->
+                <div class="cart-drawer__item--controls-wrapper">
+                  <div class="cart-drawer__quantity">
+                    <button @click="decreaseQuantity(item.id)">
+                      <Minus :size="13" />
+                    </button>
+                    <span>{{ item.quantity }}</span>
+                    <button @click="increaseQuantity(item.id)">
+                      <Plus :size="13" />
+                    </button>
+                  </div>
+                  <button
+                    class="cart-drawer__item--remove"
+                    @click="cartStore.removeItem(item.id)"
+                  >
+                    Remover
                   </button>
                 </div>
-                <span class="cart-drawer__price"
-                  >R$ {{ itemTotal(item).toFixed(2) }}</span
-                >
               </div>
+
+              <span class="cart-drawer__item--price"
+                >R$ {{ itemTotal(item).toFixed(2) }}</span
+              >
             </li>
+
+            <div class="cart-drawer__info">
+              <div>
+                <span>Subtotal</span>
+                <span>R$ 45,00 </span>
+              </div>
+              <div>
+                <span>Taxa de serviço</span>
+                <span>R$ 45,00 </span>
+              </div>
+              <div>
+                <span>Taxa de entrega </span>
+                <span>R$ 45,00 </span>
+              </div>
+            </div>
           </ul>
 
           <footer class="cart-drawer__footer">
@@ -105,8 +123,11 @@ async function handleCheckout() {
               <span>Total</span>
               <strong>R$ {{ cartStore.total.toFixed(2) }}</strong>
             </div>
-            <button class="cart-drawer__checkout" @click="handleCheckout">
-              Finalizar pedido
+            <button
+              class="cart-drawer__footer--checkout"
+              @click="handleCheckout"
+            >
+              Escolher forma de pagamento
             </button>
           </footer>
         </template>
@@ -115,7 +136,7 @@ async function handleCheckout() {
   </Teleport>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .drawer-overlay {
   position: fixed;
   inset: 0;
@@ -128,27 +149,109 @@ async function handleCheckout() {
   top: 0;
   right: 0;
   height: 100vh;
-  width: 400px;
+  width: 470px;
   max-width: 90vw;
   background: white;
   z-index: 9999;
   display: flex;
   flex-direction: column;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-}
 
-.cart-drawer__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #eee;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2.813rem;
 
-.cart-drawer__header button {
-  background: none;
-  border: none;
-  cursor: pointer;
+    &--title {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.875rem;
+      color: #717171;
+      font-weight: 300;
+
+      span {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #3f3e3e;
+      }
+    }
+  }
+
+  &__list {
+    flex: 1;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 2.813rem;
+    border-top: 1px solid rgba(220, 220, 220, 0.5);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(220, 220, 220, 0.5);
+
+    &--title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #3f3e3e;
+    }
+
+    &--controls-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 10px;
+    }
+
+    &--remove {
+      font-size: 0.875rem;
+      line-height: 1em;
+      color: #a6a29f;
+    }
+
+    &--price {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #50a773;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      span {
+        font-size: 0.875rem;
+        color: #717171;
+      }
+    }
+  }
+
+  &__footer {
+    padding: 1.25rem 2.813rem;
+
+    &--checkout {
+      width: 100%;
+      background: #ea1d2c;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+      padding: 15px 0;
+    }
+  }
 }
 
 .cart-drawer__empty {
@@ -159,47 +262,10 @@ async function handleCheckout() {
   color: #999;
 }
 
-.cart-drawer__list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.cart-drawer__item {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #f2f2f2;
-}
-
 .cart-drawer__options {
   margin-top: 0.35rem;
   font-size: 0.8rem;
   color: #717171;
-}
-
-.cart-drawer__remove {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
-  background: none;
-  border: none;
-  color: #e63946;
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 0;
-}
-
-.cart-drawer__item-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
 }
 
 .cart-drawer__quantity {
@@ -219,33 +285,11 @@ async function handleCheckout() {
   align-items: center;
 }
 
-.cart-drawer__price {
-  font-weight: 600;
-  color: #50a773;
-  font-size: 0.9rem;
-}
-
-.cart-drawer__footer {
-  padding: 1.25rem 1.5rem;
-  border-top: 1px solid #eee;
-}
-
 .cart-drawer__total {
   display: flex;
   justify-content: space-between;
   font-size: 1.05rem;
   margin-bottom: 1rem;
-}
-
-.cart-drawer__checkout {
-  width: 100%;
-  padding: 0.85rem;
-  background: #e63946;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .fade-enter-active,
