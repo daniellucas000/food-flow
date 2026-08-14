@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Handbag, LogOut } from '@lucide/vue';
+import SearchInput from '~/components/form/search-input.vue';
 
 const route = useRoute();
 const slug = route.params.slug as string;
@@ -27,41 +28,43 @@ async function handleLogout() {
 <template>
   <div class="store-layout">
     <header class="store-header">
-      <NuxtLink to="/" class="store-nav__logo">Ifoode</NuxtLink>
+      <div class="store-header__content">
+        <NuxtLink to="/" class="store-nav__logo">Ifoode</NuxtLink>
 
-      <div class="store-nav__search">
-        <input placeholder="Busque por item" />
+        <SearchInput placeholder="Busque por item" />
+
+        <div v-if="customerStore.customer" class="store-header__user">
+          <span class="store-header__user-name"
+            >Olá, {{ customerStore.customer.name }}</span
+          >
+          <button
+            :class="['store-header__cart', { active: cartStore.itemCount > 0 }]"
+            @click="cartStore.open()"
+          >
+            <Handbag :size="24" />
+            <div>
+              <span class="store-header__cart--cost">
+                R$ {{ cartStore.total }}
+              </span>
+              <span class="store-header__cart--items">
+                {{ cartStore.itemCount }}
+                {{ cartStore.itemCount === 1 ? 'item' : 'itens' }}
+              </span>
+            </div>
+          </button>
+          <button class="store-header__logout" @click="handleLogout">
+            <LogOut />
+          </button>
+        </div>
+
+        <NuxtLink v-else :to="`/${slug}/login`" class="store-nav__login">
+          Entrar
+        </NuxtLink>
       </div>
-
-      <div v-if="customerStore.customer" class="store-header__user">
-        <span class="store-header__user-name"
-          >Olá, {{ customerStore.customer.name }}</span
-        >
-        <button
-          :class="['store-header__cart', { active: cartStore.itemCount > 0 }]"
-          @click="cartStore.open()"
-        >
-          <Handbag :size="24" />
-          <div>
-            <span class="store-header__cart--cost">
-              R$ {{ cartStore.total }}
-            </span>
-            <span class="store-header__cart--items">
-              {{ cartStore.itemCount }}
-              {{ cartStore.itemCount === 1 ? 'item' : 'itens' }}
-            </span>
-          </div>
-        </button>
-        <button class="store-header__logout" @click="handleLogout">
-          <LogOut />
-        </button>
-      </div>
-
-      <NuxtLink v-else :to="`/${slug}/login`" class="store-nav__login">
-        Entrar
-      </NuxtLink>
     </header>
-    <slot />
+    <main>
+      <slot />
+    </main>
   </div>
   <CartDrawer />
 </template>
@@ -71,18 +74,23 @@ async function handleLogout() {
   position: relative;
 }
 .store-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
   position: sticky;
   width: 100vw;
-  height: 80px;
   background-color: #fff;
   box-shadow: inset 0 -1px 0 #dcdcdc;
   top: 0;
   z-index: 9997;
-  padding: 20px 42px;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 1366px;
+    margin: 0 auto;
+    padding: 20px 30px;
+    height: 80px;
+  }
 
   &__user {
     display: flex;
@@ -170,5 +178,11 @@ async function handleLogout() {
   color: #333;
   text-decoration: none;
   font-size: 0.9rem;
+}
+
+main {
+  padding: 0 30px;
+  max-width: 1366px;
+  margin: 0 auto;
 }
 </style>

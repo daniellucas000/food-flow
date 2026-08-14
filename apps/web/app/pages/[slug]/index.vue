@@ -2,6 +2,7 @@
 definePageMeta({
   layout: 'store',
 });
+import SearchInput from '~/components/form/search-input.vue';
 import type {
   PublicStoreMenu,
   PublicCategory,
@@ -65,18 +66,14 @@ const filteredCategories = computed<PublicCategory[]>(() => {
     </div>
 
     <div class="store-page__header-wrapper">
-      <input
-        class="store-page__header-wrapper--search"
-        v-model="searchTerm"
-        placeholder="Buscar no cardápio"
-      />
+      <SearchInput placeholder="Buscar no cardápio" v-model="searchTerm" />
 
       <div class="store-page__header-wrapper--scheduling">
         <button>Entrega</button>
         <div>
           <span class="store-page__header-wrapper--day">Hoje</span>
           <div class="store-page__header-wrapper--subtitle">
-            <span>38-48 min</span>
+            <span>38-48 min • </span>
             <span>R$ {{ storeData.store.deliveryFee }}</span>
           </div>
         </div>
@@ -135,9 +132,6 @@ const filteredCategories = computed<PublicCategory[]>(() => {
 }
 
 .store-page {
-  max-width: 1366px;
-  margin: 0 auto;
-
   &__header {
     padding: 35px 30px 0;
     max-width: 1366px;
@@ -205,18 +199,16 @@ const filteredCategories = computed<PublicCategory[]>(() => {
     align-items: center;
     gap: 1rem;
 
-    &--search {
-      flex: 1;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+    label {
+      max-width: 100%;
     }
 
     &--scheduling {
       display: flex;
       align-items: center;
       gap: 1rem;
+      max-width: 230px;
+      width: 100%;
 
       button {
         background: #fff;
@@ -224,9 +216,7 @@ const filteredCategories = computed<PublicCategory[]>(() => {
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
         border-radius: 4px;
         cursor: pointer;
-        flex: 1 1;
-        height: 58px;
-        padding: 0 1rem;
+        padding: 16px 1rem;
         font-size: 14px;
       }
     }
@@ -284,6 +274,7 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
       border-radius: 4px;
       cursor: pointer;
+      margin-bottom: 30px;
 
       &:hover {
         border: 1px solid #dbdad9;

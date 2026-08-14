@@ -30,7 +30,7 @@ export class AuthService {
     const user = await this.userService.user({ email: email });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('E-mail ou senha incorretos.');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);

@@ -14,7 +14,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 ul,
@@ -33,7 +33,8 @@ body {
   color: #000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
 }
 
 img,

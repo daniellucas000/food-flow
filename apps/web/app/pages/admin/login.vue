@@ -13,8 +13,8 @@ async function handleSubmit() {
   try {
     await login(email.value, password.value);
     await navigateTo('/admin');
-  } catch {
-    errorMessage.value = 'Email ou senha inválidos';
+  } catch (error: any) {
+    errorMessage.value = error?.data?.message ?? 'Email ou senha inválidos';
   } finally {
     isLoading.value = false;
   }
