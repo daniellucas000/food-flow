@@ -9,6 +9,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ close: [] }>();
 
+const { formatBRL } = useCurrency();
 const cartStore = useCartStore();
 const quantity = ref(1);
 
@@ -99,47 +100,53 @@ function handleAddToCart() {
           <span class="modal__content--info-serves"
             ><Users :size="12" /> 4 pessoas</span
           >
-          <span class="modal__content--price">R$ {{ item.price }}</span>
+          <span class="modal__content--price">{{ formatBRL(item.price) }}</span>
         </header>
-
-        <div class="modal__content--header-choices">
-          <div>
-            <strong>Escolha seu sanduíche</strong>
-            <span class="choice-desc">Escolha 4 opções. </span>
-          </div>
-          <div class="flex">
-            <span class="mini-tag">0/4</span>
-            <span class="mini-tag">obrigatório</span>
-          </div>
-        </div>
 
         <div
           v-for="group in item.optionGroups"
           :key="group.id"
           class="modal__group"
         >
-          <h3>
-            {{ group.name }}
-            <small v-if="group.required">(obrigatório)</small>
-          </h3>
+          <div class="modal__content--header-choices">
+            <div>
+              <strong>{{ group.name }}</strong>
+              <span class="choice-desc">
+                Escolha {{ group.maxSelect }}
+                {{ group.maxSelect === 1 ? 'opção' : 'opções' }}.
+              </span>
+            </div>
+            <div class="flex">
+              <span class="mini-tag"
+                >{{ selections[group.id]?.length ?? 0 }}/{{
+                  group.maxSelect
+                }}</span
+              >
+              <span v-if="group.required" class="mini-tag">obrigatório</span>
+            </div>
+          </div>
 
-          <label
-            v-for="option in group.options"
-            :key="option.id"
-            class="modal__option"
-          >
-            <input
-              :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
-              :name="group.id"
-              :checked="selections[group.id]?.includes(option.id)"
-              @change="toggleOption(group, option.id)"
-            />
-            {{ option.name }}
-            <span v-if="Number(option.priceModifier) > 0"
-              >+ R$ {{ option.priceModifier }}</span
-            >
-          </label>
+          <div class="modal__content--label-wrapper">
+            <label v-for="option in group.options" :key="option.id">
+              <span class="option-info">
+                <span class="option-name">{{ option.name }}</span>
+                <span
+                  v-if="Number(option.priceModifier) > 0"
+                  class="option-price"
+                >
+                  + {{ formatBRL(option.priceModifier) }}
+                </span>
+              </span>
+              <input
+                :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
+                :name="group.id"
+                :checked="selections[group.id]?.includes(option.id)"
+                @change="toggleOption(group, option.id)"
+              />
+            </label>
+          </div>
         </div>
+
         <div class="modal__actions">
           <div class="modal__actions--counter">
             <button @click="quantity = Math.max(1, quantity - 1)">
@@ -157,7 +164,7 @@ function handleAddToCart() {
             @click="handleAddToCart"
           >
             <span> Adicionar</span>
-            <span>R${{ totalPrice.toFixed(2) }}</span>
+            <span>{{ formatBRL(totalPrice) }}</span>
           </button>
         </div>
       </div>
@@ -181,7 +188,6 @@ function handleAddToCart() {
   left: 50%;
   opacity: 1;
   overflow-x: hidden;
-  overflow-y: auto;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -282,6 +288,50 @@ function handleAddToCart() {
           height: max-content;
           border-radius: 3px;
           text-transform: uppercase;
+        }
+      }
+    }
+
+    &--label-wrapper {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 40px;
+        border-bottom: 1px solid #f7f7f7;
+
+        font-size: 0.875rem;
+        color: #3f3e3e;
+        font-weight: 100;
+
+        .option-info {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .option-price {
+          color: #717171;
+        }
+
+        input[type='radio'],
+        input[type='checkbox'] {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border: 2px solid #dcdcdc;
+          border-radius: 50%;
+          cursor: pointer;
+          flex-shrink: 0;
+
+          &:checked {
+            border-color: #ea1d2c;
+            background-color: #ea1d2c;
+            box-shadow: inset 0 0 0 4px #fff;
+          }
         }
       }
     }
