@@ -1,3 +1,4 @@
+// upload.controller.ts
 import {
   Controller,
   Post,
@@ -9,6 +10,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { AuthGuard } from '../auth/guard/auth.guard';
 
+interface UploadedImageFile {
+  buffer: Buffer;
+  originalname: string;
+  mimetype: string;
+}
+
 @UseGuards(AuthGuard)
 @Controller('upload')
 export class UploadController {
@@ -16,7 +23,7 @@ export class UploadController {
 
   @Post('image')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadImage(@UploadedFile() file: UploadedImageFile) {
     const url = await this.uploadService.uploadImage(
       file.buffer,
       file.originalname,

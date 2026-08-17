@@ -22,11 +22,24 @@ export function useMenu() {
     return api<MenuItem[]>('/menu-items');
   }
 
+  async function uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const result = await api<{ url: string }>('/upload/image', {
+      method: 'POST',
+      body: formData,
+    });
+
+    return result.url;
+  }
+
   async function createMenuItem(data: {
     categoryId: string;
     name: string;
     description?: string;
     price: number;
+    imageUrl?: string;
   }) {
     return api<MenuItem>('/menu-items', {
       method: 'POST',
@@ -45,5 +58,6 @@ export function useMenu() {
     fetchMenuItems,
     createMenuItem,
     deleteMenuItem,
+    uploadImage,
   };
 }

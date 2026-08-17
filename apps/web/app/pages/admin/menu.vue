@@ -13,6 +13,7 @@ const {
   fetchMenuItems,
   createMenuItem,
   deleteMenuItem,
+  uploadImage,
 } = useMenu();
 
 const categories = ref<Category[]>([]);
@@ -26,7 +27,26 @@ const newItem = reactive({
   name: '',
   description: '',
   price: 0,
+  imageUrl: '',
 });
+
+const isUploadingImage = ref(false);
+const imageInputRef = ref<HTMLInputElement | null>(null);
+
+async function handleImageChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  isUploadingImage.value = true;
+  try {
+    newItem.imageUrl = await uploadImage(file);
+  } catch {
+    alert('Falha ao enviar imagem. Tente novamente.');
+  } finally {
+    isUploadingImage.value = false;
+  }
+}
 
 async function loadData() {
   isLoading.value = true;
@@ -58,10 +78,14 @@ async function handleCreateItem() {
     name: newItem.name,
     description: newItem.description || undefined,
     price: Number(newItem.price),
+    imageUrl: newItem.imageUrl || undefined,
   });
+
   newItem.name = '';
   newItem.description = '';
   newItem.price = 0;
+  newItem.imageUrl = '';
+  if (imageInputRef.value) imageInputRef.value.value = '';
   await loadData();
 }
 
@@ -122,7 +146,28 @@ function itemsByCategory(categoryId: string) {
           placeholder="Preço"
           required
         />
-        <button type="submit">Criar item</button>
+
+        <label class="menu-page__image-field">
+          Imagem do item
+          <input
+            ref="imageInputRef"
+            type="file"
+            accept="image/*"
+            @change="handleImageChange"
+          />
+        </label>
+
+        <p v-if="isUploadingImage" class="menu-page__uploading">
+          Enviando imagem...
+        </p>
+        <img
+          v-else-if="newItem.imageUrl"
+          :src="newItem.imageUrl"
+          alt="Pré-visualização"
+          class="menu-page__preview"
+        />
+
+        <button type="submit" :disabled="isUploadingImage">Criar item</button>
       </form>
     </section>
 
@@ -166,6 +211,27 @@ function itemsByCategory(categoryId: string) {
 .menu-page__item-form {
   flex-direction: column;
   max-width: 320px;
+}
+
+.menu-page__image-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.menu-page__preview {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.menu-page__uploading {
+  font-size: 0.85rem;
+  color: #999;
 }
 
 li {
