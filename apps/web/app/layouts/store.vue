@@ -31,7 +31,7 @@ async function handleLogout() {
       <div class="store-header__content">
         <NuxtLink to="/" class="store-nav__logo">Ifoode</NuxtLink>
 
-        <SearchInput placeholder="Busque por item" />
+        <!-- <SearchInput placeholder="Busque por item" /> -->
 
         <div v-if="customerStore.customer" class="store-header__user">
           <span class="store-header__user-name"

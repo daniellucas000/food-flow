@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ArrowLeft } from '@lucide/vue';
 import type { Category, MenuItem } from '~/types/menu';
 
 definePageMeta({
@@ -19,6 +20,7 @@ const {
 const categories = ref<Category[]>([]);
 const items = ref<MenuItem[]>([]);
 const isLoading = ref(true);
+const isCreatingCategory = ref(false);
 
 const newCategoryName = ref('');
 
@@ -97,21 +99,79 @@ async function handleDeleteItem(id: string) {
 function itemsByCategory(categoryId: string) {
   return items.value.filter((item) => item.categoryId === categoryId);
 }
+
+const tabs = [
+  {
+    label: 'Cardápio',
+    value: 'menu',
+  },
+  {
+    label: 'Produtos',
+    value: 'products',
+  },
+  {
+    label: 'Complementos',
+    value: 'complements',
+  },
+];
+
+const activeTab = ref('menu');
 </script>
 
 <template>
   <div class="menu-page">
     <h1>Cardápio</h1>
+    <p>Defina quais os itens seus clientes podem pedir</p>
 
-    <section class="menu-page__section">
-      <h2>Categorias</h2>
-      <form
-        class="menu-page__inline-form"
-        @submit.prevent="handleCreateCategory"
+    <nav class="tab-nav">
+      <button
+        v-for="tab in tabs"
+        :key="tab.value"
+        type="button"
+        :class="{ 'tab-nav__item--active': activeTab === tab.value }"
+        @click="activeTab = tab.value"
       >
-        <input v-model="newCategoryName" placeholder="Nome da categoria" />
-        <button type="submit">Adicionar</button>
-      </form>
+        {{ tab.label }}
+      </button>
+    </nav>
+
+    <section>
+      <div v-if="activeTab === 'menu'">
+        <div v-if="!isCreatingCategory">
+          <input type="text" placeholder="buscar item" />
+          <button>dropdown</button>
+          <button @click="isCreatingCategory = true">
+            Adicionar categoria
+          </button>
+        </div>
+
+        <div v-if="isCreatingCategory">
+          <div>
+            <button @click="isCreatingCategory = false">
+              <ArrowLeft />
+            </button>
+            <h2>Nova categoria</h2>
+          </div>
+          <p>Preencha as informações da nova categoria</p>
+
+          <form
+            class="menu-page__inline-form"
+            @submit.prevent="handleCreateCategory"
+          >
+            <input v-model="newCategoryName" placeholder="Nome da categoria" />
+            <button type="submit">Adicionar</button>
+          </form>
+        </div>
+      </div>
+
+      <div v-else-if="activeTab === 'products'">Conteúdo dos produtos</div>
+
+      <div v-else-if="activeTab === 'complements'">Conteúdo dos produtos</div>
+    </section>
+
+    <!-- <section class="menu-page__section">
+      <h2>Categorias</h2>
+
 
       <ul>
         <li v-for="category in categories" :key="category.id">
@@ -186,14 +246,14 @@ function itemsByCategory(categoryId: string) {
           </li>
         </ul>
       </div>
-    </section>
+    </section> -->
   </div>
 </template>
 
 <style scoped>
 .menu-page {
-  padding: 2rem;
-  max-width: 800px;
+  max-width: 1366px;
+  margin: 0 auto;
 }
 
 .menu-page__section {
@@ -240,5 +300,22 @@ li {
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 1rem;
+
+  &__item {
+    padding: 0.5rem 1rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &--active {
+      font-weight: 600;
+      border-bottom: 2px solid currentColor;
+    }
+  }
 }
 </style>
