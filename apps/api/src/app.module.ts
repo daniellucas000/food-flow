@@ -8,6 +8,7 @@ import { CategoryModule } from './category/category.module';
 import { MenuItemModule } from './menu-item/menu-item.module';
 import { OrderService } from './order/order.service';
 import { OrderModule } from './order/order.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { OrderModule } from './order/order.module';
     CategoryModule,
     MenuItemModule,
     OrderModule,
+    UploadModule,
   ],
   providers: [OrderService],
 })
