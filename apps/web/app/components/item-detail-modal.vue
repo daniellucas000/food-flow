@@ -87,7 +87,7 @@ function handleAddToCart() {
   <div class="modal-overlay" @click.self="emit('close')">
     <div class="modal">
       <div class="modal__img-container">
-        <img src="/images/flat-customer.png" alt="" />
+        <img :src="item.imageUrl ?? ''" :alt="item.name" />
       </div>
 
       <div class="modal__content">
@@ -96,57 +96,59 @@ function handleAddToCart() {
             <h4>{{ item.name }}</h4>
             <button @click="emit('close')"><X /></button>
           </div>
-          <p class="modal__content--item-description">{{ item.description }}</p>
+        </header>
+        <div class="modal__content--scrolling">
+          <p class="modal__content--item-description">
+            {{ item.description }}
+          </p>
           <span class="modal__content--info-serves"
             ><Users :size="12" /> 4 pessoas</span
           >
           <span class="modal__content--price">{{ formatBRL(item.price) }}</span>
-        </header>
-
-        <div
-          v-for="group in item.optionGroups"
-          :key="group.id"
-          class="modal__group"
-        >
-          <div class="modal__content--header-choices">
-            <div>
-              <strong>{{ group.name }}</strong>
-              <span class="choice-desc">
-                Escolha {{ group.maxSelect }}
-                {{ group.maxSelect === 1 ? 'opção' : 'opções' }}.
-              </span>
-            </div>
-            <div class="flex">
-              <span class="mini-tag"
-                >{{ selections[group.id]?.length ?? 0 }}/{{
-                  group.maxSelect
-                }}</span
-              >
-              <span v-if="group.required" class="mini-tag">obrigatório</span>
-            </div>
-          </div>
-
-          <div class="modal__content--label-wrapper">
-            <label v-for="option in group.options" :key="option.id">
-              <span class="option-info">
-                <span class="option-name">{{ option.name }}</span>
-                <span
-                  v-if="Number(option.priceModifier) > 0"
-                  class="option-price"
-                >
-                  + {{ formatBRL(option.priceModifier) }}
+          <div
+            v-for="group in item.optionGroups"
+            :key="group.id"
+            class="modal__group"
+          >
+            <div class="modal__content--header-choices">
+              <div>
+                <strong>{{ group.name }}</strong>
+                <span class="choice-desc">
+                  Escolha {{ group.maxSelect }}
+                  {{ group.maxSelect === 1 ? 'opção' : 'opções' }}.
                 </span>
-              </span>
-              <input
-                :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
-                :name="group.id"
-                :checked="selections[group.id]?.includes(option.id)"
-                @change="toggleOption(group, option.id)"
-              />
-            </label>
+              </div>
+              <div class="flex">
+                <span class="mini-tag"
+                  >{{ selections[group.id]?.length ?? 0 }}/{{
+                    group.maxSelect
+                  }}</span
+                >
+                <span v-if="group.required" class="mini-tag">obrigatório</span>
+              </div>
+            </div>
+
+            <div class="modal__content--label-wrapper">
+              <label v-for="option in group.options" :key="option.id">
+                <span class="option-info">
+                  <span class="option-name">{{ option.name }}</span>
+                  <span
+                    v-if="Number(option.priceModifier) > 0"
+                    class="option-price"
+                  >
+                    + {{ formatBRL(option.priceModifier) }}
+                  </span>
+                </span>
+                <input
+                  :type="group.maxSelect === 1 ? 'radio' : 'checkbox'"
+                  :name="group.id"
+                  :checked="selections[group.id]?.includes(option.id)"
+                  @change="toggleOption(group, option.id)"
+                />
+              </label>
+            </div>
           </div>
         </div>
-
         <div class="modal__actions">
           <div class="modal__actions--counter">
             <button @click="quantity = Math.max(1, quantity - 1)">
@@ -183,11 +185,11 @@ function handleAddToCart() {
   z-index: 9999;
 }
 .modal {
-  display: grid;
-  // grid-template-columns: 1fr 1fr;
+  display: flex;
+  gap: 20px;
   left: 50%;
   opacity: 1;
-  overflow-x: hidden;
+  overflow: hidden;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -201,7 +203,22 @@ function handleAddToCart() {
   min-height: auto;
   border-radius: 4px;
 
+  &__img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    flex: 1;
+  }
+
   &__content {
+    flex: 1;
+
+    &--scrolling {
+      overflow-y: auto;
+      height: 433px;
+    }
+
     &--header-top {
       display: flex;
       align-items: center;

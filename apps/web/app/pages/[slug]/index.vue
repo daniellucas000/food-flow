@@ -91,15 +91,19 @@ const filteredCategories = computed<PublicCategory[]>(() => {
           @click="selectedItem = item"
         >
           <div>
-            <h3 class="store-page__menu--item-description">{{ item.name }}</h3>
-            <p class="store-page__menu--item-details" v-if="item.description">
-              {{ item.description }}
-            </p>
+            <div>
+              <h3 class="store-page__menu--item-description">
+                {{ item.name }}
+              </h3>
+              <p class="store-page__menu--item-details" v-if="item.description">
+                {{ item.description }}
+              </p>
 
-            <span class="store-page__menu--info-serves"> Serve 1 pessoa</span>
-            <span class="store-page__menu--item-price"
-              >R$ {{ item.price }}</span
-            >
+              <span class="store-page__menu--info-serves"> Serve 1 pessoa</span>
+              <span class="store-page__menu--item-price"
+                >R$ {{ item.price }}</span
+              >
+            </div>
 
             <div class="">
               <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" />
@@ -250,6 +254,10 @@ const filteredCategories = computed<PublicCategory[]>(() => {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 30px;
 
+    @media (max-width: 742px) {
+      grid-template-columns: repeat(1, minmax(420px, 1fr));
+    }
+
     &--category-title {
       font-size: 1.5rem;
       letter-spacing: -1px;
@@ -259,10 +267,6 @@ const filteredCategories = computed<PublicCategory[]>(() => {
     }
 
     &--dish-card {
-      display: grid;
-      grid-template-columns: 1fr 180px;
-      grid-gap: 15px;
-      min-height: 147px;
       width: 100%;
       background: #fff;
       text-decoration: none;
@@ -278,6 +282,25 @@ const filteredCategories = computed<PublicCategory[]>(() => {
 
       &:hover {
         border: 1px solid #dbdad9;
+      }
+
+      > div {
+        display: grid;
+        grid-template-columns: 1fr 180px;
+        grid-gap: 15px;
+        min-height: 147px;
+
+        > div {
+          display: flex;
+          flex-direction: column;
+        }
+
+        img {
+          object-fit: contain;
+          width: 170px;
+          height: 170px;
+          border-radius: 4px;
+        }
       }
     }
 
@@ -313,6 +336,7 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       line-height: 1.25rem;
       font-weight: 400;
       color: #50a773;
+      margin-top: auto;
     }
   }
 }
