@@ -1,5 +1,17 @@
 <script setup lang="ts">
-import { ArrowLeft } from '@lucide/vue';
+import {
+  ArrowLeft,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  MoreVertical,
+  Pause,
+  Pencil,
+  Plus,
+} from '@lucide/vue';
+import SearchInput from '~/components/form/search-input.vue';
+import ProductDrawer from '~/components/product-drawer.vue';
 import type { Category, MenuItem } from '~/types/menu';
 
 definePageMeta({
@@ -7,14 +19,14 @@ definePageMeta({
   layout: 'admin',
 });
 
+const { formatBRL } = useCurrency();
+
 const {
   fetchCategories,
   createCategory,
   deleteCategory,
   fetchMenuItems,
-  createMenuItem,
   deleteMenuItem,
-  uploadImage,
 } = useMenu();
 
 const categories = ref<Category[]>([]);
@@ -23,32 +35,18 @@ const isLoading = ref(true);
 const isCreatingCategory = ref(false);
 
 const newCategoryName = ref('');
+const searchQuery = ref('');
+const filterCategoryId = ref('');
 
-const newItem = reactive({
-  categoryId: '',
-  name: '',
-  description: '',
-  price: 0,
-  imageUrl: '',
-});
+const collapsedCategoryIds = ref<Set<string>>(new Set());
 
-const isUploadingImage = ref(false);
-const imageInputRef = ref<HTMLInputElement | null>(null);
-
-async function handleImageChange(event: Event) {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-
-  isUploadingImage.value = true;
-  try {
-    newItem.imageUrl = await uploadImage(file);
-  } catch {
-    alert('Falha ao enviar imagem. Tente novamente.');
-  } finally {
-    isUploadingImage.value = false;
-  }
-}
+const drawerCategoryId = ref<string | null>(null);
+const drawerCategory = computed(
+  () =>
+    categories.value.find(
+      (category) => category.id === drawerCategoryId.value
+    ) ?? null
+);
 
 async function loadData() {
   isLoading.value = true;
@@ -65,29 +63,7 @@ async function handleCreateCategory() {
   if (!newCategoryName.value.trim()) return;
   await createCategory(newCategoryName.value);
   newCategoryName.value = '';
-  await loadData();
-}
-
-async function handleDeleteCategory(id: string) {
-  await deleteCategory(id);
-  await loadData();
-}
-
-async function handleCreateItem() {
-  if (!newItem.name.trim() || !newItem.categoryId) return;
-  await createMenuItem({
-    categoryId: newItem.categoryId,
-    name: newItem.name,
-    description: newItem.description || undefined,
-    price: Number(newItem.price),
-    imageUrl: newItem.imageUrl || undefined,
-  });
-
-  newItem.name = '';
-  newItem.description = '';
-  newItem.price = 0;
-  newItem.imageUrl = '';
-  if (imageInputRef.value) imageInputRef.value.value = '';
+  isCreatingCategory.value = false;
   await loadData();
 }
 
@@ -97,22 +73,52 @@ async function handleDeleteItem(id: string) {
 }
 
 function itemsByCategory(categoryId: string) {
-  return items.value.filter((item) => item.categoryId === categoryId);
+  const query = searchQuery.value.trim().toLowerCase();
+  return items.value.filter((item) => {
+    const matchesCategory = item.categoryId === categoryId;
+    const matchesQuery = !query || item.name.toLowerCase().includes(query);
+    return matchesCategory && matchesQuery;
+  });
+}
+
+const filteredCategories = computed(() => {
+  if (!filterCategoryId.value) return categories.value;
+  return categories.value.filter(
+    (category) => category.id === filterCategoryId.value
+  );
+});
+
+function isCategoryCollapsed(categoryId: string) {
+  return collapsedCategoryIds.value.has(categoryId);
+}
+
+function toggleCategoryCollapse(categoryId: string) {
+  const next = new Set(collapsedCategoryIds.value);
+  if (next.has(categoryId)) {
+    next.delete(categoryId);
+  } else {
+    next.add(categoryId);
+  }
+  collapsedCategoryIds.value = next;
+}
+
+function openDrawerForCategory(categoryId: string) {
+  drawerCategoryId.value = categoryId;
+}
+
+function closeDrawer() {
+  drawerCategoryId.value = null;
+}
+
+async function handleItemCreated() {
+  closeDrawer();
+  await loadData();
 }
 
 const tabs = [
-  {
-    label: 'Cardápio',
-    value: 'menu',
-  },
-  {
-    label: 'Produtos',
-    value: 'products',
-  },
-  {
-    label: 'Complementos',
-    value: 'complements',
-  },
+  { label: 'Cardápio', value: 'menu' },
+  { label: 'Produtos', value: 'products' },
+  { label: 'Complementos', value: 'complements' },
 ];
 
 const activeTab = ref('menu');
@@ -120,10 +126,7 @@ const activeTab = ref('menu');
 
 <template>
   <div class="menu-page">
-    <h1>Cardápio</h1>
-    <p>Defina quais os itens seus clientes podem pedir</p>
-
-    <nav class="tab-nav">
+    <nav class="menu-page__tab-nav" v-if="!isCreatingCategory">
       <button
         v-for="tab in tabs"
         :key="tab.value"
@@ -137,12 +140,41 @@ const activeTab = ref('menu');
 
     <section>
       <div v-if="activeTab === 'menu'">
-        <div v-if="!isCreatingCategory">
-          <input type="text" placeholder="buscar item" />
-          <button>dropdown</button>
-          <button @click="isCreatingCategory = true">
-            Adicionar categoria
-          </button>
+        <div class="menu-page__buttons" v-if="!isCreatingCategory">
+          <div>
+            <SearchInput v-model="searchQuery" placeholder="Buscar um item" />
+
+            <select v-model="filterCategoryId">
+              <option value="">Selecionar categoria</option>
+              <option
+                v-for="category in categories"
+                :key="category.id"
+                :value="category.id"
+              >
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="menu-page__actions">
+            <button @click="isCreatingCategory = true">
+              Adicionar categoria
+            </button>
+            <button
+              type="button"
+              class="menu-page__icon-button"
+              title="Duplicar cardápio"
+            >
+              <Copy :size="18" />
+            </button>
+            <button
+              type="button"
+              class="menu-page__icon-button"
+              title="Ordenar categorias"
+            >
+              <ArrowUpDown :size="18" />
+            </button>
+          </div>
         </div>
 
         <div v-if="isCreatingCategory">
@@ -159,163 +191,242 @@ const activeTab = ref('menu');
             @submit.prevent="handleCreateCategory"
           >
             <input v-model="newCategoryName" placeholder="Nome da categoria" />
-            <button type="submit">Adicionar</button>
+            <div>
+              <button type="button" @click="isCreatingCategory = false">
+                Cancelar
+              </button>
+              <button type="submit">Adicionar</button>
+            </div>
           </form>
+        </div>
+
+        <div v-else class="menu-page__category-list">
+          <p v-if="isLoading">Carregando...</p>
+          <p v-else-if="!filteredCategories.length">
+            Nenhuma categoria cadastrada.
+          </p>
+
+          <div
+            v-for="category in filteredCategories"
+            :key="category.id"
+            class="category-card"
+          >
+            <div class="category-card__header">
+              <span class="category-card__name">{{ category.name }}</span>
+
+              <div class="category-card__header-actions">
+                <button type="button" class="category-card__combo-btn">
+                  Criar combo
+                </button>
+                <button
+                  type="button"
+                  class="category-card__icon-btn"
+                  title="Pausar categoria"
+                >
+                  <Pause :size="16" />
+                </button>
+                <button
+                  type="button"
+                  class="category-card__icon-btn"
+                  title="Mais opções"
+                >
+                  <MoreVertical :size="16" />
+                </button>
+                <button
+                  type="button"
+                  class="category-card__icon-btn"
+                  :title="
+                    isCategoryCollapsed(category.id) ? 'Expandir' : 'Recolher'
+                  "
+                  @click="toggleCategoryCollapse(category.id)"
+                >
+                  <ChevronDown
+                    v-if="isCategoryCollapsed(category.id)"
+                    :size="16"
+                  />
+                  <ChevronUp v-else :size="16" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              v-show="!isCategoryCollapsed(category.id)"
+              class="category-card__body"
+            >
+              <ul
+                v-if="itemsByCategory(category.id).length"
+                class="category-card__items"
+              >
+                <li
+                  v-for="item in itemsByCategory(category.id)"
+                  :key="item.id"
+                  class="category-card__item"
+                >
+                  <img
+                    v-if="item.imageUrl"
+                    :src="item.imageUrl"
+                    :alt="item.name"
+                    class="category-card__item-image"
+                  />
+                  <div class="category-card__item-info">
+                    <strong>{{ item.name }}</strong>
+                    <span>{{ formatBRL(item.price) }}</span>
+                  </div>
+                  <button type="button" @click="handleDeleteItem(item.id)">
+                    Excluir
+                  </button>
+                </li>
+              </ul>
+
+              <button
+                type="button"
+                class="category-card__add-offer"
+                @click="openDrawerForCategory(category.id)"
+              >
+                <Plus :size="16" />
+                Adicionar produto
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div v-else-if="activeTab === 'products'">Conteúdo dos produtos</div>
-
       <div v-else-if="activeTab === 'complements'">Conteúdo dos produtos</div>
     </section>
 
-    <!-- <section class="menu-page__section">
-      <h2>Categorias</h2>
-
-
-      <ul>
-        <li v-for="category in categories" :key="category.id">
-          {{ category.name }}
-          <button @click="handleDeleteCategory(category.id)">Excluir</button>
-        </li>
-      </ul>
-    </section>
-
-    <section class="menu-page__section">
-      <h2>Novo item</h2>
-      <form class="menu-page__item-form" @submit.prevent="handleCreateItem">
-        <select v-model="newItem.categoryId" required>
-          <option value="" disabled>Selecione a categoria</option>
-          <option
-            v-for="category in categories"
-            :key="category.id"
-            :value="category.id"
-          >
-            {{ category.name }}
-          </option>
-        </select>
-        <input v-model="newItem.name" placeholder="Nome do item" required />
-        <input
-          v-model="newItem.description"
-          placeholder="Descrição (opcional)"
-        />
-        <input
-          v-model.number="newItem.price"
-          type="number"
-          step="0.01"
-          placeholder="Preço"
-          required
-        />
-
-        <label class="menu-page__image-field">
-          Imagem do item
-          <input
-            ref="imageInputRef"
-            type="file"
-            accept="image/*"
-            @change="handleImageChange"
-          />
-        </label>
-
-        <p v-if="isUploadingImage" class="menu-page__uploading">
-          Enviando imagem...
-        </p>
-        <img
-          v-else-if="newItem.imageUrl"
-          :src="newItem.imageUrl"
-          alt="Pré-visualização"
-          class="menu-page__preview"
-        />
-
-        <button type="submit" :disabled="isUploadingImage">Criar item</button>
-      </form>
-    </section>
-
-    <section v-if="!isLoading" class="menu-page__section">
-      <h2>Itens por categoria</h2>
-      <div
-        v-for="category in categories"
-        :key="category.id"
-        class="menu-page__category-block"
-      >
-        <h3>{{ category.name }}</h3>
-        <ul>
-          <li v-for="item in itemsByCategory(category.id)" :key="item.id">
-            {{ item.name }} — R$ {{ item.price }}
-            <button @click="handleDeleteItem(item.id)">Excluir</button>
-          </li>
-        </ul>
-      </div>
-    </section> -->
+    <ProductDrawer
+      v-if="drawerCategory"
+      :category="drawerCategory"
+      @close="closeDrawer"
+      @created="handleItemCreated"
+    />
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .menu-page {
-  max-width: 1366px;
-  margin: 0 auto;
+  &__tab-nav {
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    > div {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  &__category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
 }
 
-.menu-page__section {
-  margin-bottom: 2rem;
-}
+.category-card {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  overflow: hidden;
 
-.menu-page__inline-form,
-.menu-page__item-form {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #f5f5f5;
+  }
 
-.menu-page__item-form {
-  flex-direction: column;
-  max-width: 320px;
-}
+  &__name {
+    flex: 1;
+    font-weight: 600;
+    text-decoration: underline;
+  }
 
-.menu-page__image-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.85rem;
-  color: #555;
-}
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-.menu-page__preview {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #eee;
-}
+  &__combo-btn {
+    border: 1px solid #d0d0d0;
+    border-radius: 20px;
+    padding: 6px 14px;
+    background: #fff;
+  }
 
-.menu-page__uploading {
-  font-size: 0.85rem;
-  color: #999;
-}
+  &__icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+  }
 
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
-}
+  &__body {
+    padding: 12px 16px 16px;
+  }
 
-.tab-nav {
-  display: flex;
-  gap: 1rem;
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
 
   &__item {
-    padding: 0.5rem 1rem;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-    &--active {
-      font-weight: 600;
-      border-bottom: 2px solid currentColor;
-    }
+  &__item-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  &__item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__add-offer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    border: 1px dashed #d0d0d0;
+    border-radius: 8px;
+    background: #fff;
   }
 }
 </style>

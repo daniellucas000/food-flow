@@ -29,7 +29,9 @@ import { asideMenu } from '~/constants/aside-menu';
           <li>Alguma coisa</li>
         </ul>
       </header>
-      <slot />
+      <div>
+        <slot />
+      </div>
     </main>
   </div>
 </template>
@@ -72,6 +74,11 @@ import { asideMenu } from '~/constants/aside-menu';
       ul {
         display: flex;
       }
+    }
+
+    > div {
+      max-width: 1366px;
+      margin: 0 auto;
     }
   }
 }
