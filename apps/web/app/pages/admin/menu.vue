@@ -10,6 +10,7 @@ import {
   Pencil,
   Plus,
 } from '@lucide/vue';
+import Input from '~/components/form/input.vue';
 import SearchInput from '~/components/form/search-input.vue';
 import ProductDrawer from '~/components/product-drawer.vue';
 import type { Category, MenuItem } from '~/types/menu';
@@ -17,6 +18,7 @@ import type { Category, MenuItem } from '~/types/menu';
 definePageMeta({
   middleware: 'auth-staff',
   layout: 'admin',
+  title: 'Cardápio',
 });
 
 const { formatBRL } = useCurrency();
@@ -131,7 +133,7 @@ const activeTab = ref('menu');
         v-for="tab in tabs"
         :key="tab.value"
         type="button"
-        :class="{ 'tab-nav__item--active': activeTab === tab.value }"
+        :class="{ active: activeTab === tab.value }"
         @click="activeTab = tab.value"
       >
         {{ tab.label }}
@@ -156,25 +158,9 @@ const activeTab = ref('menu');
             </select>
           </div>
 
-          <div class="menu-page__actions">
-            <button @click="isCreatingCategory = true">
-              Adicionar categoria
-            </button>
-            <button
-              type="button"
-              class="menu-page__icon-button"
-              title="Duplicar cardápio"
-            >
-              <Copy :size="18" />
-            </button>
-            <button
-              type="button"
-              class="menu-page__icon-button"
-              title="Ordenar categorias"
-            >
-              <ArrowUpDown :size="18" />
-            </button>
-          </div>
+          <button @click="isCreatingCategory = true">
+            Adicionar categoria
+          </button>
         </div>
 
         <div v-if="isCreatingCategory">
@@ -190,7 +176,11 @@ const activeTab = ref('menu');
             class="menu-page__inline-form"
             @submit.prevent="handleCreateCategory"
           >
-            <input v-model="newCategoryName" placeholder="Nome da categoria" />
+            <Input
+              v-model="newCategoryName"
+              placeholder="Nome da categoria"
+              label="Nome"
+            />
             <div>
               <button type="button" @click="isCreatingCategory = false">
                 Cancelar
@@ -212,29 +202,31 @@ const activeTab = ref('menu');
             class="category-card"
           >
             <div class="category-card__header">
-              <span class="category-card__name">{{ category.name }}</span>
+              <span class="category-card__header--name">{{
+                category.name
+              }}</span>
 
-              <div class="category-card__header-actions">
-                <button type="button" class="category-card__combo-btn">
+              <div class="category-card__header--actions">
+                <!-- <button type="button" class="category-card__header--combo">
                   Criar combo
-                </button>
-                <button
+                </button> -->
+                <!-- <button
                   type="button"
-                  class="category-card__icon-btn"
+                  class="category-card__header--icon"
                   title="Pausar categoria"
                 >
                   <Pause :size="16" />
                 </button>
                 <button
                   type="button"
-                  class="category-card__icon-btn"
+                  class="category-card__header--icon"
                   title="Mais opções"
                 >
                   <MoreVertical :size="16" />
-                </button>
+                </button> -->
                 <button
                   type="button"
-                  class="category-card__icon-btn"
+                  class="category-card__header--icon"
                   :title="
                     isCategoryCollapsed(category.id) ? 'Expandir' : 'Recolher'
                   "
@@ -255,20 +247,20 @@ const activeTab = ref('menu');
             >
               <ul
                 v-if="itemsByCategory(category.id).length"
-                class="category-card__items"
+                class="category-card__body--items"
               >
                 <li
                   v-for="item in itemsByCategory(category.id)"
                   :key="item.id"
-                  class="category-card__item"
+                  class="category-card__body--item"
                 >
                   <img
                     v-if="item.imageUrl"
                     :src="item.imageUrl"
                     :alt="item.name"
-                    class="category-card__item-image"
+                    class="category-card__body--item-image"
                   />
-                  <div class="category-card__item-info">
+                  <div class="category-card__body--item-info">
                     <strong>{{ item.name }}</strong>
                     <span>{{ formatBRL(item.price) }}</span>
                   </div>
@@ -280,7 +272,7 @@ const activeTab = ref('menu');
 
               <button
                 type="button"
-                class="category-card__add-offer"
+                class="category-card__body--add-offer"
                 @click="openDrawerForCategory(category.id)"
               >
                 <Plus :size="16" />
@@ -307,12 +299,34 @@ const activeTab = ref('menu');
 <style scoped lang="scss">
 .menu-page {
   &__tab-nav {
+    display: flex;
+    gap: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #a6a6a5;
+    max-width: fit-content;
+
+    button {
+      position: relative;
+
+      &.active {
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -11px;
+          height: 2px;
+          background: #ea1d2c;
+          z-index: 1;
+        }
+      }
+    }
   }
 
   &__buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin: 20px 0;
 
     > div {
       display: flex;
@@ -320,28 +334,10 @@ const activeTab = ref('menu');
     }
   }
 
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  &__icon-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: #fff;
-  }
-
   &__category-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 20px;
   }
 }
 
@@ -356,77 +352,77 @@ const activeTab = ref('menu');
     gap: 12px;
     padding: 12px 16px;
     background: #f5f5f5;
-  }
 
-  &__name {
-    flex: 1;
-    font-weight: 600;
-    text-decoration: underline;
-  }
+    &--name {
+      flex: 1;
+      font-weight: 600;
+      text-decoration: underline;
+    }
 
-  &__header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    &--actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  &__combo-btn {
-    border: 1px solid #d0d0d0;
-    border-radius: 20px;
-    padding: 6px 14px;
-    background: #fff;
-  }
+    &--combo {
+      border: 1px solid #d0d0d0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      background: #fff;
+    }
 
-  &__icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: transparent;
+    &--icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+    }
   }
 
   &__body {
     padding: 12px 16px 16px;
-  }
 
-  &__items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
+    &--items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
 
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+    &--item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  &__item-image {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
+    &--item-image {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
 
-  &__item-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+    &--item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-  &__add-offer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px;
-    border: 1px dashed #d0d0d0;
-    border-radius: 8px;
-    background: #fff;
+    &--add-offer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      border: 1px dashed #d0d0d0;
+      border-radius: 8px;
+      background: #fff;
+    }
   }
 }
 </style>

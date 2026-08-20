@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { X } from '@lucide/vue';
 import type { Category } from '~/types/menu';
+import Input from './form/input.vue';
+import Button from './button.vue';
 
 const props = defineProps<{
   category: Category;
@@ -15,14 +17,20 @@ const { createMenuItem, uploadImage } = useMenu();
 
 const name = ref('');
 const description = ref('');
-const price = ref(0);
+const price = ref('');
 const imageUrl = ref('');
 const isUploadingImage = ref(false);
 const isSubmitting = ref(false);
 
-async function handleImageChange(event: Event) {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
+const imageFile = ref<File | null>(null);
+
+const isOpen = ref(true);
+
+function requestClose() {
+  isOpen.value = false;
+}
+
+watch(imageFile, async (file) => {
   if (!file) return;
 
   isUploadingImage.value = true;
@@ -33,7 +41,7 @@ async function handleImageChange(event: Event) {
   } finally {
     isUploadingImage.value = false;
   }
-}
+});
 
 async function handleSubmit() {
   if (!name.value.trim()) return;
@@ -55,101 +63,112 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="product-drawer__overlay" @click.self="emit('close')">
-    <aside class="product-drawer">
-      <header class="product-drawer__header">
-        <div>
-          <h2>Detalhes do produto</h2>
-        </div>
-        <button type="button" @click="emit('close')">
-          <X :size="20" />
-        </button>
-      </header>
+  <Teleport to="body">
+    <Transition name="fade" appear>
+      <div
+        v-if="isOpen"
+        class="product-drawer__overlay"
+        @click.self="requestClose"
+      />
+    </Transition>
 
-      <form class="product-drawer__form" @submit.prevent="handleSubmit">
-        <label>
-          Nome do produto
-          <input v-model="name" placeholder="Ex: Pizza de calabresa" required />
-        </label>
+    <Transition name="slide" appear @after-leave="emit('close')">
+      <aside v-if="isOpen" class="product-drawer">
+        <header class="product-drawer__header">
+          <div>
+            <h2>Detalhes do produto</h2>
+          </div>
+          <button type="button" @click="requestClose">
+            <X :size="20" />
+          </button>
+        </header>
 
-        <label>
-          Descrição (opcional)
-          <input v-model="description" placeholder="Descrição" />
-        </label>
-
-        <label>
-          Preço
-          <input
-            v-model.number="price"
-            type="number"
-            step="0.01"
-            placeholder="0,00"
+        <form class="product-drawer__form" @submit.prevent="handleSubmit">
+          <Input
+            v-model="name"
+            placeholder="Ex: Pizza de calabresa"
+            label="Nome do produto"
             required
           />
-        </label>
 
-        <label class="product-drawer__image-field">
-          Imagem do item
-          <input
-            ref="imageInputRef"
+          <Input
+            v-model="description"
+            placeholder="Descrição"
+            label="Descrição (opcional)"
+          />
+
+          <Input
+            v-model="price"
+            type="number"
+            placeholder="0,00"
+            label="Preço"
+            required
+          />
+
+          <Input
+            v-model="imageFile"
+            label="Adicionar imagem"
             type="file"
             accept="image/*"
-            @change="handleImageChange"
           />
-        </label>
 
-        <p v-if="isUploadingImage" class="product-drawer__uploading">
-          Enviando imagem...
-        </p>
-        <img
-          v-else-if="imageUrl"
-          :src="imageUrl"
-          alt="Pré-visualização"
-          class="product-drawer__preview"
-        />
+          <p v-if="isUploadingImage" class="product-drawer__uploading">
+            Enviando imagem...
+          </p>
+          <img
+            v-else-if="imageUrl"
+            :src="imageUrl"
+            alt="Pré-visualização"
+            class="product-drawer__preview"
+          />
 
-        <div class="product-drawer__actions">
-          <button type="button" @click="emit('close')">Cancelar</button>
-          <button type="submit" :disabled="isUploadingImage || isSubmitting">
-            Adicionar
-          </button>
-        </div>
-      </form>
-    </aside>
-  </div>
+          <div class="product-drawer__actions">
+            <Button type="button" @click="requestClose" variant="outline"
+              >Cancelar</Button
+            >
+            <Button type="submit" :disabled="isUploadingImage || isSubmitting"
+              >Adicionar</Button
+            >
+          </div>
+        </form>
+      </aside>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped lang="scss">
 .product-drawer {
-  &__overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: flex-end;
-    z-index: 50;
-  }
-
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
   width: 420px;
-  max-width: 100%;
-  height: 100%;
+  max-width: 90vw;
   background: #fff;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   overflow-y: auto;
+  z-index: 51;
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 50;
+  }
 
   &__header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
   }
 
   &__form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: 100%;
 
     label {
       display: flex;
@@ -172,5 +191,23 @@ async function handleSubmit() {
     gap: 8px;
     margin-top: auto;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.25s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
 }
 </style>

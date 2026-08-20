@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import { asideMenu } from '~/constants/aside-menu';
+
+const route = useRoute();
+const headerTitle = useHeaderTitle();
+
+watch(
+  () => route.meta.title,
+  (title) => {
+    headerTitle.value = (title as string) ?? '';
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -22,7 +33,7 @@ import { asideMenu } from '~/constants/aside-menu';
     </aside>
     <main class="admin-layout__main">
       <header>
-        <h2>Tal coisa</h2>
+        <h2>{{ headerTitle }}</h2>
         <ul>
           <li>Alguma coisa</li>
           <li>Alguma coisa</li>
@@ -79,6 +90,7 @@ import { asideMenu } from '~/constants/aside-menu';
     > div {
       max-width: 1366px;
       margin: 0 auto;
+      padding: 2rem;
     }
   }
 }

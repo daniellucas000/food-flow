@@ -4,6 +4,7 @@ import type { Order, OrderStatusValue } from '~/types/order';
 definePageMeta({
   middleware: 'auth-staff',
   layout: 'admin',
+  title: 'Pedidos',
 });
 
 const { fetchStoreOrders, updateOrderStatus } = useOrders();
@@ -49,8 +50,6 @@ async function cancelOrder(order: Order) {
 
 <template>
   <div class="orders-page">
-    <h1>Pedidos</h1>
-
     <div v-if="isLoading">Carregando...</div>
 
     <div v-else-if="orders.length === 0" class="orders-page__empty">
@@ -101,10 +100,6 @@ async function cancelOrder(order: Order) {
 </template>
 
 <style scoped>
-.orders-page {
-  padding: 2rem;
-  max-width: 700px;
-}
 .orders-page__empty {
   color: #999;
   padding: 2rem 0;
