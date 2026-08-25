@@ -26,7 +26,11 @@ export class AuthService {
   async signIn(
     email: string,
     password: string,
-  ): Promise<{ access_token: string; user: Omit<User, 'password'> }> {
+  ): Promise<{
+    access_token: string;
+    user: Omit<User, 'password'>;
+    store: { id: string; name: string; logoUrl: string | null };
+  }> {
     const user = await this.userService.user({ email: email });
 
     if (!user) {
@@ -37,6 +41,11 @@ export class AuthService {
 
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const store = await this.storeService.store({ id: user.storeId });
+    if (!store) {
+      throw new NotFoundException('Store not found');
     }
 
     const payload = {
@@ -52,6 +61,7 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: userWithoutPassword,
+      store: { id: store.id, name: store.name, logoUrl: store.logoUrl },
     };
   }
 

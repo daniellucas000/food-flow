@@ -46,6 +46,8 @@ export type StoreMinAggregateOutputType = {
   slug: string | null
   phone: string | null
   whatsappNumber: string | null
+  logoUrl: string | null
+  bannerUrl: string | null
   street: string | null
   number: string | null
   neighborhood: string | null
@@ -67,6 +69,8 @@ export type StoreMaxAggregateOutputType = {
   slug: string | null
   phone: string | null
   whatsappNumber: string | null
+  logoUrl: string | null
+  bannerUrl: string | null
   street: string | null
   number: string | null
   neighborhood: string | null
@@ -88,6 +92,8 @@ export type StoreCountAggregateOutputType = {
   slug: number
   phone: number
   whatsappNumber: number
+  logoUrl: number
+  bannerUrl: number
   street: number
   number: number
   neighborhood: number
@@ -126,6 +132,8 @@ export type StoreMinAggregateInputType = {
   slug?: true
   phone?: true
   whatsappNumber?: true
+  logoUrl?: true
+  bannerUrl?: true
   street?: true
   number?: true
   neighborhood?: true
@@ -147,6 +155,8 @@ export type StoreMaxAggregateInputType = {
   slug?: true
   phone?: true
   whatsappNumber?: true
+  logoUrl?: true
+  bannerUrl?: true
   street?: true
   number?: true
   neighborhood?: true
@@ -168,6 +178,8 @@ export type StoreCountAggregateInputType = {
   slug?: true
   phone?: true
   whatsappNumber?: true
+  logoUrl?: true
+  bannerUrl?: true
   street?: true
   number?: true
   neighborhood?: true
@@ -277,6 +289,8 @@ export type StoreGroupByOutputType = {
   slug: string
   phone: string
   whatsappNumber: string | null
+  logoUrl: string | null
+  bannerUrl: string | null
   street: string
   number: string
   neighborhood: string
@@ -322,6 +336,8 @@ export type StoreWhereInput = {
   slug?: Prisma.StringFilter<"Store"> | string
   phone?: Prisma.StringFilter<"Store"> | string
   whatsappNumber?: Prisma.StringNullableFilter<"Store"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Store"> | string | null
+  bannerUrl?: Prisma.StringNullableFilter<"Store"> | string | null
   street?: Prisma.StringFilter<"Store"> | string
   number?: Prisma.StringFilter<"Store"> | string
   neighborhood?: Prisma.StringFilter<"Store"> | string
@@ -349,6 +365,8 @@ export type StoreOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   street?: Prisma.SortOrder
   number?: Prisma.SortOrder
   neighborhood?: Prisma.SortOrder
@@ -379,6 +397,8 @@ export type StoreWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Store"> | string
   phone?: Prisma.StringFilter<"Store"> | string
   whatsappNumber?: Prisma.StringNullableFilter<"Store"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Store"> | string | null
+  bannerUrl?: Prisma.StringNullableFilter<"Store"> | string | null
   street?: Prisma.StringFilter<"Store"> | string
   number?: Prisma.StringFilter<"Store"> | string
   neighborhood?: Prisma.StringFilter<"Store"> | string
@@ -406,6 +426,8 @@ export type StoreOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   street?: Prisma.SortOrder
   number?: Prisma.SortOrder
   neighborhood?: Prisma.SortOrder
@@ -436,6 +458,8 @@ export type StoreScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Store"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Store"> | string
   whatsappNumber?: Prisma.StringNullableWithAggregatesFilter<"Store"> | string | null
+  logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Store"> | string | null
+  bannerUrl?: Prisma.StringNullableWithAggregatesFilter<"Store"> | string | null
   street?: Prisma.StringWithAggregatesFilter<"Store"> | string
   number?: Prisma.StringWithAggregatesFilter<"Store"> | string
   neighborhood?: Prisma.StringWithAggregatesFilter<"Store"> | string
@@ -458,6 +482,8 @@ export type StoreCreateInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -485,6 +511,8 @@ export type StoreUncheckedCreateInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -512,6 +540,8 @@ export type StoreUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -539,6 +569,8 @@ export type StoreUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -566,6 +598,8 @@ export type StoreCreateManyInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -588,6 +622,8 @@ export type StoreUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -610,6 +646,8 @@ export type StoreUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -632,6 +670,8 @@ export type StoreCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   street?: Prisma.SortOrder
   number?: Prisma.SortOrder
   neighborhood?: Prisma.SortOrder
@@ -661,6 +701,8 @@ export type StoreMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   street?: Prisma.SortOrder
   number?: Prisma.SortOrder
   neighborhood?: Prisma.SortOrder
@@ -682,6 +724,8 @@ export type StoreMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   street?: Prisma.SortOrder
   number?: Prisma.SortOrder
   neighborhood?: Prisma.SortOrder
@@ -817,6 +861,8 @@ export type StoreCreateWithoutUsersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -843,6 +889,8 @@ export type StoreUncheckedCreateWithoutUsersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -885,6 +933,8 @@ export type StoreUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -911,6 +961,8 @@ export type StoreUncheckedUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -937,6 +989,8 @@ export type StoreCreateWithoutCategoriesInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -963,6 +1017,8 @@ export type StoreUncheckedCreateWithoutCategoriesInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1005,6 +1061,8 @@ export type StoreUpdateWithoutCategoriesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1031,6 +1089,8 @@ export type StoreUncheckedUpdateWithoutCategoriesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1057,6 +1117,8 @@ export type StoreCreateWithoutMenuItemsInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1083,6 +1145,8 @@ export type StoreUncheckedCreateWithoutMenuItemsInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1125,6 +1189,8 @@ export type StoreUpdateWithoutMenuItemsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1151,6 +1217,8 @@ export type StoreUncheckedUpdateWithoutMenuItemsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1177,6 +1245,8 @@ export type StoreCreateWithoutCustomersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1203,6 +1273,8 @@ export type StoreUncheckedCreateWithoutCustomersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1245,6 +1317,8 @@ export type StoreUpdateWithoutCustomersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1271,6 +1345,8 @@ export type StoreUncheckedUpdateWithoutCustomersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1297,6 +1373,8 @@ export type StoreCreateWithoutOrdersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1323,6 +1401,8 @@ export type StoreUncheckedCreateWithoutOrdersInput = {
   slug: string
   phone: string
   whatsappNumber?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
   street: string
   number: string
   neighborhood: string
@@ -1365,6 +1445,8 @@ export type StoreUpdateWithoutOrdersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1391,6 +1473,8 @@ export type StoreUncheckedUpdateWithoutOrdersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.StringFieldUpdateOperationsInput | string
   number?: Prisma.StringFieldUpdateOperationsInput | string
   neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1484,6 +1568,8 @@ export type StoreSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   slug?: boolean
   phone?: boolean
   whatsappNumber?: boolean
+  logoUrl?: boolean
+  bannerUrl?: boolean
   street?: boolean
   number?: boolean
   neighborhood?: boolean
@@ -1512,6 +1598,8 @@ export type StoreSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   phone?: boolean
   whatsappNumber?: boolean
+  logoUrl?: boolean
+  bannerUrl?: boolean
   street?: boolean
   number?: boolean
   neighborhood?: boolean
@@ -1534,6 +1622,8 @@ export type StoreSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   phone?: boolean
   whatsappNumber?: boolean
+  logoUrl?: boolean
+  bannerUrl?: boolean
   street?: boolean
   number?: boolean
   neighborhood?: boolean
@@ -1556,6 +1646,8 @@ export type StoreSelectScalar = {
   slug?: boolean
   phone?: boolean
   whatsappNumber?: boolean
+  logoUrl?: boolean
+  bannerUrl?: boolean
   street?: boolean
   number?: boolean
   neighborhood?: boolean
@@ -1572,7 +1664,7 @@ export type StoreSelectScalar = {
   updatedAt?: boolean
 }
 
-export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "whatsappNumber" | "street" | "number" | "neighborhood" | "city" | "state" | "zipCode" | "lat" | "lng" | "deliveryFee" | "deliveryRadiusKm" | "openingHours" | "isOpen" | "createdAt" | "updatedAt", ExtArgs["result"]["store"]>
+export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "whatsappNumber" | "logoUrl" | "bannerUrl" | "street" | "number" | "neighborhood" | "city" | "state" | "zipCode" | "lat" | "lng" | "deliveryFee" | "deliveryRadiusKm" | "openingHours" | "isOpen" | "createdAt" | "updatedAt", ExtArgs["result"]["store"]>
 export type StoreInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Store$usersArgs<ExtArgs>
   categories?: boolean | Prisma.Store$categoriesArgs<ExtArgs>
@@ -1599,6 +1691,8 @@ export type $StorePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     slug: string
     phone: string
     whatsappNumber: string | null
+    logoUrl: string | null
+    bannerUrl: string | null
     street: string
     number: string
     neighborhood: string
@@ -2046,6 +2140,8 @@ export interface StoreFieldRefs {
   readonly slug: Prisma.FieldRef<"Store", 'String'>
   readonly phone: Prisma.FieldRef<"Store", 'String'>
   readonly whatsappNumber: Prisma.FieldRef<"Store", 'String'>
+  readonly logoUrl: Prisma.FieldRef<"Store", 'String'>
+  readonly bannerUrl: Prisma.FieldRef<"Store", 'String'>
   readonly street: Prisma.FieldRef<"Store", 'String'>
   readonly number: Prisma.FieldRef<"Store", 'String'>
   readonly neighborhood: Prisma.FieldRef<"Store", 'String'>

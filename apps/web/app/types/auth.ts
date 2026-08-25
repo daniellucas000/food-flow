@@ -4,10 +4,17 @@ export interface StaffUser {
   email: string;
   role: 'OWNER' | 'STAFF';
   storeId: string;
-  createdAt: string;
+}
+
+export interface StoreSummary {
+  id: string;
+  name: string;
+  logoUrl: string | null;
+  bannerUrl: string | null;
 }
 
 export interface AuthResponse {
   access_token: string;
   user: StaffUser;
+  store: StoreSummary;
 }

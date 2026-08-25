@@ -27,4 +27,21 @@ export class StoreService {
       },
     });
   }
+
+  async updateStore(
+    storeId: string,
+    data: {
+      name?: string;
+      phone?: string;
+      whatsappNumber?: string;
+      logoUrl?: string;
+      bannerUrl?: string;
+      isOpen?: boolean;
+    },
+  ): Promise<Store> {
+    return this.prisma.store.update({
+      where: { id: storeId },
+      data,
+    });
+  }
 }

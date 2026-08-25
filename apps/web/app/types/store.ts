@@ -38,6 +38,8 @@ export interface PublicStoreMenu {
     slug: string;
     isOpen: boolean;
     deliveryFee: string;
+    logoUrl: string | null;
+    bannerUrl: string | null;
   };
   categories: PublicCategory[];
 }

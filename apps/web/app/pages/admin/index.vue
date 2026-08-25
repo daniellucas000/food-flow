@@ -2,21 +2,12 @@
 definePageMeta({
   middleware: 'auth-staff',
   layout: 'admin',
+  title: 'Dashboard',
 });
-
-const authStore = useAuthStore();
-const { logout } = useAuth();
-
-async function handleLogout() {
-  logout();
-  await navigateTo('/admin/login');
-}
 </script>
 
 <template>
   <div>
-    <h1>Painel — {{ authStore.user?.name }}</h1>
-    <p>Cargo: {{ authStore.user?.role }}</p>
-    <button @click="handleLogout">Sair</button>
+    <h1>Vai ter algo aqui</h1>
   </div>
 </template>

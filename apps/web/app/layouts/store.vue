@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Handbag, LogOut } from '@lucide/vue';
-import SearchInput from '~/components/form/search-input.vue';
 
 const route = useRoute();
 const slug = route.params.slug as string;

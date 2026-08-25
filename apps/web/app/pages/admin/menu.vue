@@ -302,7 +302,7 @@ const activeTab = ref('menu');
     display: flex;
     gap: 30px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #a6a6a5;
+    border-bottom: 2px solid #f0f0f3;
     max-width: fit-content;
 
     button {
@@ -316,7 +316,7 @@ const activeTab = ref('menu');
           right: 0;
           bottom: -11px;
           height: 2px;
-          background: #ea1d2c;
+          background: #1c1d21;
           z-index: 1;
         }
       }
@@ -342,6 +342,7 @@ const activeTab = ref('menu');
 }
 
 .category-card {
+  background: #fff;
   border: 1px solid #ececec;
   border-radius: 12px;
   overflow: hidden;
@@ -351,7 +352,6 @@ const activeTab = ref('menu');
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    background: #f5f5f5;
 
     &--name {
       flex: 1;

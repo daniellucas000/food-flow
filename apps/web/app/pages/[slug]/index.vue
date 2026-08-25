@@ -47,12 +47,19 @@ const filteredCategories = computed<PublicCategory[]>(() => {
   <div v-else-if="error" class="store-page__loading">Loja não encontrada</div>
 
   <div v-else class="store-page">
-    <header class="store-page__header"></header>
+    <header class="store-page__header">
+      <img :src="storeData.store.bannerUrl || ''" alt="" />
+    </header>
 
     <div class="store-page__info">
       <div class="store-page__info--name">
         <span class="store-page__info--logo">
-          {{ storeData.store.name.charAt(0) }}
+          <img
+            v-if="storeData.store.logoUrl"
+            :src="storeData.store.logoUrl"
+            :alt="storeData.store.name"
+          />
+          <template v-else>{{ storeData.store.name.charAt(0) }}</template>
         </span>
         <h1 class="store-page__info--title">{{ storeData.store.name }}</h1>
       </div>
@@ -137,11 +144,14 @@ const filteredCategories = computed<PublicCategory[]>(() => {
 
 .store-page {
   &__header {
-    padding: 35px 30px 0;
-    max-width: 1366px;
     margin: 35px auto;
-    background: #e63946;
-    height: 250px;
+    height: 300px;
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
   }
 
   &__info {
@@ -170,6 +180,10 @@ const filteredCategories = computed<PublicCategory[]>(() => {
       font-size: 1.5rem;
       font-weight: 700;
       color: #e63946;
+
+      img {
+        border-radius: 50%;
+      }
     }
 
     &--title {

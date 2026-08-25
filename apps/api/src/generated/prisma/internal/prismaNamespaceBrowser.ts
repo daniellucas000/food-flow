@@ -89,6 +89,8 @@ export const StoreScalarFieldEnum = {
   slug: 'slug',
   phone: 'phone',
   whatsappNumber: 'whatsappNumber',
+  logoUrl: 'logoUrl',
+  bannerUrl: 'bannerUrl',
   street: 'street',
   number: 'number',
   neighborhood: 'neighborhood',
