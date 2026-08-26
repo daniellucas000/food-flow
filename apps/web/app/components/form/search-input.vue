@@ -4,12 +4,14 @@ import { Search } from '@lucide/vue';
 defineProps<{
   placeholder?: string;
 }>();
+
+const model = defineModel<string>();
 </script>
 
 <template>
   <label class="search-input">
     <Search :size="22" class="search-input__icon" />
-    <input type="text" :placeholder="placeholder" />
+    <input type="text" :placeholder="placeholder" v-model="model" />
   </label>
 </template>
 

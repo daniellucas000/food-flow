@@ -131,18 +131,30 @@ export class OrderService {
     });
   }
 
-  async updateStatus(id: string, status: OrderStatus) {
-    return this.prisma.$transaction(async (tx) => {
-      const order = await tx.order.update({
-        where: { id },
+  async updateStatus(orderId: string, status: OrderStatus) {
+    const order = await this.prisma.$transaction(async (transaction) => {
+      const updated = await transaction.order.update({
+        where: { id: orderId },
         data: { status },
+        include: { customer: true },
       });
 
-      await tx.orderStatusHistory.create({
-        data: { orderId: id, status },
+      await transaction.orderStatusHistory.create({
+        data: { orderId, status },
       });
 
-      return order;
+      return updated;
     });
+
+    this.ordersGateway.notifyStatusUpdate(order.id, order.status);
+
+    if (status === 'PREPARING' && order.customer.phone) {
+      void this.whatsappService.sendMessage(
+        order.customer.phone,
+        `✅ Seu pedido foi aceito e já está sendo preparado! Acompanhe: ${process.env.FRONTEND_URL}/pedido/${order.id}`,
+      );
+    }
+
+    return order;
   }
 }
