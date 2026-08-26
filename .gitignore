@@ -75,3 +75,6 @@ apps/web/.env
 
 # os
 .DS_Store
+
+.wwebjs_auth/
+.wwebjs_cache/

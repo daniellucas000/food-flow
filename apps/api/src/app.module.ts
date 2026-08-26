@@ -8,6 +8,7 @@ import { CategoryModule } from './category/category.module';
 import { MenuItemModule } from './menu-item/menu-item.module';
 import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UploadModule } from './upload/upload.module';
     MenuItemModule,
     OrderModule,
     UploadModule,
+    WhatsappModule,
   ],
 })
 export class AppModule {}

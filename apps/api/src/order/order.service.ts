@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderStatus } from '../generated/prisma/enums';
 import { OrdersGateway } from './order.gateway';
+import { WhatsappService } from '../whatsapp/whatsapp.service';
 
 interface CreateOrderInput {
   storeId: string;
@@ -32,6 +33,7 @@ export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private ordersGateway: OrdersGateway,
+    private whatsappService: WhatsappService,
   ) {}
 
   async create(data: CreateOrderInput) {
@@ -92,6 +94,16 @@ export class OrderService {
     });
 
     this.ordersGateway.notifyNewOrder(order.storeId, order);
+
+    const store = await this.prisma.store.findUnique({
+      where: { id: order.storeId },
+    });
+    if (store?.whatsappNumber) {
+      void this.whatsappService.sendMessage(
+        store.whatsappNumber,
+        `🔔 Novo pedido recebido!\n\nTotal: R$ ${order.total.toFixed(2)}\nTipo: ${order.deliveryType === 'DELIVERY' ? 'Entrega' : 'Retirada'}`,
+      );
+    }
 
     return order;
   }
