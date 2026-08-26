@@ -151,10 +151,11 @@ export class OrderService {
     if (status === 'PREPARING' && order.customer.phone) {
       void this.whatsappService.sendMessage(
         order.customer.phone,
-        `✅ Seu pedido foi aceito e já está sendo preparado! Acompanhe: ${process.env.FRONTEND_URL}/pedido/${order.id}`,
+        `Seu pedido foi aceito e já está sendo preparado! Acompanhe em: www.bucetinha.com `,
       );
     }
 
+    // ${process.env.FRONTEND_URL}/pedido/${order.id}
     return order;
   }
 }

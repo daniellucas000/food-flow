@@ -34,13 +34,33 @@ export class WhatsappService implements OnModuleInit {
     await this.client.initialize();
   }
 
+  private formatPhoneNumber(phoneNumber: string): string {
+    let digits = phoneNumber.replace(/\D/g, '');
+
+    digits = digits.replace(/^0/, '');
+
+    if (
+      !digits.startsWith('55') &&
+      (digits.length === 10 || digits.length === 11)
+    ) {
+      digits = `55${digits}`;
+    }
+
+    return digits;
+  }
+
   async sendMessage(phoneNumber: string, message: string): Promise<void> {
     if (!this.isReady) {
       this.logger.warn('WhatsApp ainda não está pronto, mensagem não enviada.');
       return;
     }
 
-    const chatId = `${phoneNumber.replace(/\D/g, '')}@c.us`;
-    await this.client.sendMessage(chatId, message);
+    const chatId = `${this.formatPhoneNumber(phoneNumber)}@c.us`;
+
+    try {
+      await this.client.sendMessage(chatId, message);
+    } catch {
+      this.logger.error(`Falha ao enviar WhatsApp para ${chatId}`);
+    }
   }
 }

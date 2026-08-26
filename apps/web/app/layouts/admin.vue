@@ -99,7 +99,7 @@ watch(
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-width: 200px;
+    min-width: 250px;
     height: 100vh;
     padding: 20px;
     background: #fff;

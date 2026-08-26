@@ -2,7 +2,12 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', '@nuxt/fonts'],
+  modules: [
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    '@nuxt/fonts',
+    '@vueuse/nuxt',
+  ],
   runtimeConfig: {
     public: {
       apiBase: '',
