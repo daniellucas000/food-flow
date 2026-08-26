@@ -46,6 +46,12 @@ async function cancelOrder(order: Order) {
   await updateOrderStatus(order.id, 'CANCELLED');
   await loadOrders();
 }
+
+const authStore = useAuthStore();
+
+useOrderSocket(authStore.user!.storeId, (newOrder) => {
+  orders.value.unshift(newOrder);
+});
 </script>
 
 <template>

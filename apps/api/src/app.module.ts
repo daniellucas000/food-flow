@@ -6,7 +6,6 @@ import { StoreModule } from './store/store.module';
 import { CustomerModule } from './customer/customer.module';
 import { CategoryModule } from './category/category.module';
 import { MenuItemModule } from './menu-item/menu-item.module';
-import { OrderService } from './order/order.service';
 import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
 
@@ -22,6 +21,5 @@ import { UploadModule } from './upload/upload.module';
     OrderModule,
     UploadModule,
   ],
-  providers: [OrderService],
 })
 export class AppModule {}

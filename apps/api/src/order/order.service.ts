@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderStatus } from '../generated/prisma/enums';
+import { OrdersGateway } from './order.gateway';
 
 interface CreateOrderInput {
   storeId: string;
@@ -28,7 +29,10 @@ interface CreateOrderInput {
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private ordersGateway: OrdersGateway,
+  ) {}
 
   async create(data: CreateOrderInput) {
     const subtotal = data.items.reduce((sum, item) => {
@@ -41,7 +45,7 @@ export class OrderService {
 
     const total = subtotal + data.deliveryFee;
 
-    return this.prisma.$transaction(async (tx) => {
+    const order = await this.prisma.$transaction(async (tx) => {
       const address = await tx.address.create({
         data: {
           customerId: data.customerId,
@@ -86,6 +90,10 @@ export class OrderService {
         include: { items: true, address: true },
       });
     });
+
+    this.ordersGateway.notifyNewOrder(order.storeId, order);
+
+    return order;
   }
 
   async findByCustomer(customerId: string) {
